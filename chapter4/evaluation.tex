@@ -1,0 +1,395 @@
+\section{Evaluation}
+\label{SEC:evaluation}
+
+With our prototype in hand, we designed a set of experiments to evaluate
+whether PORT would be effective in real world situations.
+Specifically, we aim to answer the following questions:
+
+\begin{itemize}
+
+    % Re-implementing CS anomalies
+  \item{Can PORT express the anomalies used by SEA to identify bugs?}
+
+    % Extending to support RPC formats
+  \item{How easy is it to extend PORT to support activity representations
+    other than system calls?}
+
+    % Dornhackl et al. defining maliciousness
+  \item{What problems can be addressed by employing PORT on
+  non-system-call activity representations?}
+
+    % Performance information
+  \item{Can PORT process input streams in a reasonable amount of time?}
+
+\end{itemize}
+
+
+\subsection{Expressing SEA Anomalies}
+\label{sub:SEAAnomalies}
+Given that this work is motivated
+in large part
+by the effectiveness of the SEA technique,
+our first experiment aims to reproduce the anomalies described
+in~\cite{DBLP:conf/issre/MooreCFW19}.
+Specifically,
+we test PORT's ability to recreate
+the study's unusual file type mutator,
+and its cross-disk file move checkers, which were used to identify
+the bulk of the bugs that were found.
+% Our hope was that by using PORT we could eliminate boiler plate code,
+% save effort by handling common tasks automatically, and improve reliability
+% by providing a structured way to modify and output system call sequences.
+
+
+
+\subsubsection{Creating the Unusual File type Mutator}
+\label{subsub:UnusualFiletype}
+For the first part of this experiment,
+we used PORT to implement an ``unusual file type''
+mutator.
+As illustrated in Figure~\ref{lst:SEAListings},this mutator
+takes an input trace
+that contains a call to either {\tt stat()},
+{\tt fstat()},
+or {\tt lstat()}
+and modifies the call's result data structure such
+that its {\tt ST\_MODE} member will contain a value
+that indicates an unusual file type.
+As can be seen in
+Figure~\ref{lst:SEAListings}, this task can be expressed with only a few lines of PORT code.  In the figure,
+lines 1 through 4 define what {\tt stat()}, {\tt fstat()}, and {\tt
+lstat()} calls look like, and which parameter contains the result buffer.
+Line 6 generates an accepting state that, when entered, produces an output
+system call with a modified value in the return structure's {\tt st\_mode}
+field.  The output can then be used to modify the results of a running
+application's system calls in order to carry out the remaining steps of the
+SEA technique.
+
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+\begin{lstlisting}
+event fstat {filedesc: Numeric@0};
+event stat {filename: String@0};
+event open {filename: String@0, filedesc: Numeric@ret};
+
+stat({filename: fn});
+open({filename: ?fn, filedesc: fd});
+fstat({fildesc: ?fd});
+\end{lstlisting}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+\begin{lstlisting}
+event Statbuf {mode: String@2};
+event anystat {stat sb: Statbuf@1}
+        | {lstat sb: Statbuf@1} 
+        | {fstat sb: Statbuf@1};
+anystat({sb: {mode: ->"st\_mode=S\_IFBLK"}});
+\end{lstlisting}
+\end{minipage}
+\caption{The left listing contains a
+PORT program that can detect whether a file was replaced as it was copied.
+The right listing shows a program that
+identifies a \texttt{stat}, \texttt{lstat}, or \texttt{fstat} call and modifies
+  the \lstinline+ST\_MODE+ member of its \lstinline+statbuf+ output parameter to contain the value
+  \lstinline+"S\_IFBLK"+. This indicates that the file being examined is a block device rather than a regular file.}
+\label{lst:SEAListings}
+\end{figure}
+
+The original implementation of this mutator in~\cite{DBLP:conf/issre/MooreCFW19} consisted of 55 lines
+of Python code.
+When compared to the original mutator, it became apparent that there were
+several major advantages
+to using
+PORT:
+
+\textit{Minimal boilerplate code:} The PORT program lacks the boilerplate
+code associated with
+reading an input trace, managing mutator state, and producing output.
+This is possible because PORT's capabilities are narrowly defined to
+only describe the states and operations of a transducer.  As a result,
+functions can be generically implemented within PORT's core, eliminating
+the need for users to do so manually.
+
+\textit{No code required to filter out uninteresting calls:}
+In PORT, there is no
+need to explicitly exclude system
+calls outside of the desired set.  Each statement defines a new state with
+incoming and outgoing transitions configured such that any system calls not
+dealt with in the PORT program are ignored.
+
+\textit{Easy to modify call contents:}  PORT's operators make it
+easy to change only those parameters  of a system call
+ needed to produce output.
+This is a far cry
+from the Python program, which relies on manual and fragile string manipulation
+to achieve the same effect.
+
+\subsubsection{Supporting Cross-Disk Move Checkers}
+
+In the second part of this experiment we test whether PORT can be used to
+implement the ``checkers'' used in the SEA work to determine if an
+application can correctly move a file from one disk to another.
+This task is a common source of bugs in Linux applications. As the
+Linux
+{\tt rename()} system call does not support moving files from one disk to
+another,
+applications must perform this complex
+operation themselves.
+Moore et al. identified the steps required to
+correctly perform such a move by examining the source code of the ``mv''
+command and implemented a set of checkers to identify situations where one
+of these steps is not carried out correctly by an application.
+In real world applications,
+these checkers were able to identify bugs
+in many popular applications and libraries that offer file movement
+capabilities.
+
+We evaluated each of the four checkers listed in Moore et al.'s work and
+determined that PORT could be used to implement three of them.
+Figure~\ref{lst:SEAListings} shows our PORT implementation of
+the ``File Replaced During Copy'' checker
+that ensures {\tt fstat} is used after a file is opened but
+before it is moved.  This pattern indicates that an application may be
+storing the {\tt inode} number of the file -- a step necessary to prevent a race
+condition where the file is replaced during the move process.
+Comparing it to the
+original SEA checker,
+which consisted of 45 lines of Python,
+shows that many of the same deficiencies that affected the unusual file type
+mutator above are present.
+The PORT version is much more concise and its meaning is
+less obscured by boilerplate and state management code that makes up the
+bulk of the Python version.
+
+This exercise did expose one of PORT's shortcomings.  Specifically,
+we found that PORT cannot currently implement the ``Extended File
+Attributes'' checker, which
+ ensures that an application
+preserves all of a file's extended attributes and re-applies them after the move.
+PORT's lack of a list data structure made it difficult to create this checker as a
+list is required to capture the values {\tt getxattr()}
+and ensure they have all been applied with a
+corresponding call to {\tt setxattr()}.
+Though we are considering such a feature for future implementation,
+we do not currently support it because such an extension could
+hurt program clarity and make it more difficult to reason about
+mutator behavior.
+
+
+\subsection{Extending PORT to Other Activity Representations}
+
+Our second experiment evaluates PORT's usability beyond system call manipulation.
+A logical next step is to test PORT's capabilities when working
+with a higher level, but similarly structured, activity representation, such as remote procedure calls.
+We chose the JSONRPC and XMLRPC APIs for this purpose as they are widely used and have well
+supported parsing libraries or modules.
+
+To evaluate how well PORT can work with these representations we
+construct transformer modules that convert these formats into our
+intermediate data format.
+We test our implementation by writing PORT programs that modify
+activity streams similar to the examples presented in the JSONRPC
+2.0~\cite{jsonspec} and XMLRPC~\cite{xmlspec}
+specifications.  One such program is shown in
+Figure~\ref{lst:JSONProgram}.  This program matches a pattern of ``test''
+and ``update'' calls and, if the pattern is found, the final update call's
+parameters are replaced with the constants 999 and 888, respectively.
+
+Adding support for JSONRPC and XMLRPC by creating
+appropriate transformers required only a handful of hours of effort.
+Based on the ease and speed with which we
+were able to complete these new input stream formats, we are confident that PORT can be
+quickly adapted to support new activity representations as required.
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{c}
+\begin{lstlisting}
+event update {up1: Number@0, up2: Number@1};
+event test {tp1: Number@0, tp2: String@1};
+update({up1: pone, up2: ptwo});
+test({tp1: 45, tp2: "alpha"});
+update({up1: ->999, up2: ->888});
+\end{lstlisting}
+\end{tabular}
+\caption{This PORT program matches a pattern of JSONRPC calls to
+  ``update'' and ``test.''  If the pattern is identified, the final call to
+  update is modified so that its first two parameter values are replaced
+  with new constant values.}
+\label{lst:JSONProgram}
+\end{figure}
+
+
+\subsection{Utilizing PORT's Flexibility}
+We further evaluate PORT's ability to replicate useful strategies by
+reproducing Dornhackl et al.'s~\cite{Dornhackl2014}
+efforts to describe and detect malicious behavior in Windows
+applications.  The Dornhackl team was able to describe what it takes to implement a malicious goal, and then
+map those tasks onto the
+concrete Windows API calls required to carry them out. PORT accomplishes the task by making one operation out of a set of similar API calls and then describing a malicious task  in terms of
+these aggregate operations. As illustrated in  Figure~\ref{lst:DornhacklOpen} PORT uses variants to group the API calls that may be used to
+open a Windows registry key \cite{Dornhackl2014}. 
+
+\begin{figure}
+\begin{lstlisting}
+OPEN => RegOpenKeyA NtOpenKey
+  | RegOpenKeyW NtOpenKey
+  | RegOpenKeyExA NtOpenKey
+  | RegOpenKeyExW NtOpenKey
+\end{lstlisting}
+\caption{Grouping of Windows API calls for opening or creating a Windows
+  registry key into an OPEN operation as per Dornhackl et al.}
+\label{lst:DornhacklOpen}
+\end{figure}
+
+Each symbol, beginning with ``Reg'' in Figure~\ref{lst:DornhacklOpen}, represents a user
+API call that opens or creates a registry key.  {\tt NtOpenKey} always follows
+these calls because it is the underlying ``native'' call that actually performs the operation.
+Figure~\ref{lst:PORTOpenReg} shows the grouping and execution semantics as expressed
+in PORT.
+
+\begin{figure}
+\begin{lstlisting}[gobble=2]
+  event open {RegOpenKeyA ...} | {RegOpenKeyW ...};
+    # ... further variants omitted
+  event NtOpenKey {...};
+
+  open({...});
+  NtOpenKey({...});
+\end{lstlisting}
+  \caption{Abstract PORT program (with parameters
+  omitted) that groups Windows API calls responsible for opening or
+  creating a Windows registry key.  It also shows
+  how the requirement that \lstinline+NtOpenKey+ follow any of these calls can be
+  captured.}
+\label{lst:PORTOpenReg}
+\end{figure}
+
+Though they use different approaches to do so,  both Dornhackl et al. and PORT can describe a pattern that, if
+detected, indicates that
+a Windows registry key has been installed
+that can cause some malicious action
+the next time the machine is restarted.
+% (assuming PORT were extended to support Windows).
+The PORT program is shown in Figure~\ref{lst:PORTRegDetect}.  The program groups API calls into \lstinline+OPEN+, \lstinline+SET+, and \lstinline+CLOSE+ operations and searches for a pattern that
+indicates
+an application is
+setting an autostart key.  PORT can also express
+that the pattern must appear for a specific registry key.
+%using the value stored in the ``regkey'' register.
+
+\begin{figure}
+\centering
+\begin{tabular}{c}
+\begin{lstlisting}[gobble=2]
+  event open {RegOpenKeyA ...} | {RegOpenKeyW ...} | ...;
+    # further variants omitted
+  event NtOpenKey {...};
+  event set {RegSetValueExA ...} | {RegSetValueExW ...}
+            | ...;  # further variants omitted
+  event NtSetValueKey {...};
+  event close {RegCloseKey ...};
+  event NtClose {...};
+
+  open({...});
+  NtOpenKey({...});
+  set({...});
+  NtSetValueKey({...});
+  close({...});
+  NtClose({...});
+\end{lstlisting}
+\end{tabular}
+  \caption{This listing shows an abstract PORT program (with parameters
+  omitted) that detects situations where an application is maliciously
+  installing an ``autostart'' Windows registry key.  It does so by
+  implementing the pattern described by Dornhackl et al.  Unimportant
+  parameters are omitted and some API call variants in each group have been
+  eluded.}
+\label{lst:PORTRegDetect}
+\end{figure}
+
+
+\subsection{PORT's Performance}
+
+%It doesn't matter how useful a tool may be
+%if it takes too long to complete its work.
+%Though our implementation is
+%only a prototype, we wanted to make sure that its performance was not
+%overly slow.
+Our final experiment evaluates the
+time required for our prototype implementation
+to identify specific
+patterns within real-world system call traces.
+We chose two widely used network applications that offered a sufficient level of complexity,
+NCat
+and
+Python's http server,
+and recorded test traces using the following 
+experimental setup.  The applications are configured to service
+a simple piece of content (a single string in the case of NCat), and their system call activity is
+recorded using {\tt strace} while handling a request from a remote client.
+The strace recordings are then processed using the PORT program shown in
+Figure~\ref{lst:RealWorldPerformance},  which
+identifies the sequence of system calls that implement
+a server's request handling loop\footnote{Recordings are pre-processed to remove system calls
+related to executable loading and process creation.}.  Table~\ref{tbl:RealWorldPerformance}
+shows the times in seconds required to perform this identification on each
+web server, as well as the total number of system calls in each trace.
+
+\begin{figure}
+\centering
+  \begin{tabular}{|c|c|c}
+                & Time in Sec. & Num. Syscalls.\\
+              \hline
+  http.server   & 0.104 Sec.   & 297   \\
+  NCat          & 0.092 Sec.   & 43      \\
+\end{tabular}
+\caption{Time in seconds to process the listed number of events.}
+\label{tbl:RealWorldPerformance}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tabular}{c}
+\begin{lstlisting}[gobble=2]
+  event accept { accept fd: Number@ret}
+             | { accept4 fd: Number@ret};
+  event anyrecv { recvfrom fd: Number@0}
+    | { read fd: Number@0} | { recv fd: Number@0};
+  event anysend {sendto fd: Number@0}
+    | { write fd: Number@0} | { send fd: Number@0};
+  event close {fd: Number@0};
+
+  accept({fd: storefd});
+  anyrecv({fd: ?storefd});
+  anysend({fd: ?storefd});
+  close({fd: ?storefd});
+\end{lstlisting}
+\end{tabular}
+\caption{A PORT program that matches patterns where a server application
+  accepts a connection, receives a request, sends a response, and closes
+  the connection.  The program uses variants to handle cases where
+  applications use different system calls to perform some common action
+  (e.g. receiving data from a socket).}
+\label{lst:RealWorldPerformance}
+\end{figure}
+
+The results in Table~\ref{tbl:RealWorldPerformance} show that
+PORT's
+processing time increases in line with the total number of system calls
+in the recording.  We anticipate that much of this processing cost is
+associated with setting up the Python execution environment and that a more
+optimized implementation could improve performance gains in this area.
+Further,
+it is likely that PORT's performance is closely tied to
+disk throughput,
+and that advancing the transducer
+as each system call is evaluated
+adds little additional overhead.
+%A condition with varying disk speeds could be designed to confirm this suspicion.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "paper"
+%%% End:

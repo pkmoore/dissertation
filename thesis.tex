@@ -30,6 +30,26 @@
 \usepackage{url, cite, graphicx, algorithmic, amsmath, amsfonts, amsthm}
 \usepackage[chapter]{algorithm}
 
+% toprule, midrule etc.
+\usepackage{booktabs}
+
+
+% Custom characters
+\usepackage{pifont}
+\newcommand{\tickmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+
+% Comment things out
+\usepackage{comment}
+
+
+% Source code listings
+\usepackage{listings}
+
+
+% Dummy text
+\usepackage{lipsum}
 %% this is a customized package
 %% Do NOT use unless you ABSOLUTELY have to.  Nesting sections that
 %% deep is ridiculous.
@@ -79,7 +99,7 @@
 \frontmatter
 
 \title{Fancy Research Results of World-Wide Importance}
-\author{Generic M.\ Student}
+\author{Preston Moore}
 
 \date{\today}
 
@@ -118,11 +138,12 @@
 \include{chapter1/chapter1}
 \include{chapter2/chapter2}
 \include{chapter3/chapter3}
+\include{chapter4/chapter4}
 
 \bibliographystyle{plain}
 {\singlespace
 %% If you are using BibTeX, else comment out
-\bibliography{bibliography}
+\bibliography{bibdata}
 %% If you are not using BibTeX, but hand-craft your bibliography,
 %% uncomment the line below.
 % \include{biblio}

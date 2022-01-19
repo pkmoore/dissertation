@@ -1,0 +1,173 @@
+\section{Related Work}
+\label{SEC:related-work}
+
+One of the ultimate goals of developing PORT
+was to make it easier for developers to
+create tools capable of detecting intrusion,
+performing fault injection,
+or conducting other program-level testing.
+To design such a language,
+we consulted
+previous work
+that processed sequences of events, such as
+system calls, RPC invocations or
+web-browser events.
+Below, we discuss some of the more significant work in these areas.
+
+\subsection{System Call Stream Processing Applications}
+
+System call based intrusion detection systems
+can be categorized into two groups: misuse and anomaly detection.
+The former search for known patterns of application specific
+system call
+sequences known as intrusion signatures~\cite{GARCIATEODORO200918}.
+In the latter, the intrusion signatures are unknown,
+but any deviation
+from ``normally observed'' system call sequences are flagged as
+malicious~\cite{DBLP:conf/sp/ForrestHSL96}.
+The two systems are typically used in tandem, and
+can vary in the way they examine the system call stream.
+
+Forrest et al.~\cite{DBLP:conf/sp/ForrestHSL96} describe
+an anomaly detection system that
+``exercises'' on various inputs to expose the
+sequence of system calls found in valid situations.
+Each witnessed pattern of contiguous system calls in the stream
+is cataloged in a database.
+The application's system call stream
+is then monitored and any detected
+deviation triggers a
+predefined security policy.
+Warrender et al. implemented a hidden Markov model-based implementation of this same system~\cite{DBLP:conf/sp/WarrenderFP99},
+while
+Sekar et al.\cite{DBLP:conf/sp/SekarBDB01} proposed
+an algorithm
+for creating a finite state automaton that can learn the valid system
+call sequences of an application.
+
+%The automaton is not limited to recognizing the small system call sequence sizes
+%proposed in~\cite{DBLP:conf/sp/ForrestHSL96}.
+%Instead, the automaton learns the entire sequence of system calls produced by
+%each run of the application.
+%To help minimize the size of the automaton, the authors incorporate program
+%counter information to recognize loops.
+%In addition, system calls made within standard libraries (such as libc) are excluded from the automaton as the authors felt that these system calls do not necessarily help capture the unique nature of system call behavior within the program.
+
+Ko et al.~\cite{DBLP:conf/acsac/KoFL94} 
+takes a different approach.
+Each system call in the
+stream is converted to a standard audit-policy record format, which is then
+matched against program policy. For example,
+the rule \lstinline+exec "/bin/(sh | csh)"+ allows a new shell to be invoked and the rule
+\lstinline+~read("/etc/passed")+ prevents the password file from being read.
+However, the audit-policy can only be applied to
+one system call at a time,
+and does not support rules to recognize specific chains of system calls.
+Another alternative is
+Systrace~\cite{DBLP:conf/uss/Provos03},
+which
+supports fine-grained process confinement
+via system call monitoring and uses an associated policy language 
+to describe the prescribed action when a rule evaluates to true.
+Phoebe~\cite{DBLP:journals/corr/abs-2006-04444}
+identifies patterns of system call failures during normal program execution
+and uses them to generate fault-injection experiments
+to test the reliability of an application when a failure occurs.
+The downside is that, after a specific sequence of system calls are seen, there is no way to create more elaborate fault-injection
+tests.
+
+Remote procedure calls can also be abused for malicious
+intent,
+so Giffin et al. ~\cite{DBLP:conf/uss/GiffinJM02} used
+push-down automata to model the possible valid
+remote call streams that an application might generate.
+The application's incoming stream 
+is then vetted against a model
+to determine whether particular calls are valid and therefore executable.
+
+Lastly, there are some domain-specific options for
+identifying problems
+in function calls.
+In~\cite{DBLP:conf/icse/ChristakisEG017}, Christakis et al. describe a language that allows developers to intercept and modify
+Windows applications’ dynamic link library function calls, which includes system
+calls. The language provides a mechanism to identify which
+function call or set of function calls, should be
+intercepted by the runtime.
+
+A commonality
+of all the systems
+outlined above
+is that they were built to solve one particular problem
+and
+therefore lack the flexibility that drove the creation of PORT.
+For example, these systems were not designed to be easily re-targeted
+to a different type of event stream or to allow for transformations.
+
+It is likely that many of the previously cited FSA-based programs can be further improved by applying recent advances in inference modeling algorithms~\cite{MarianiPS17,WalkinshawTD13,EmamM18,BeschastnikhBEK14}. Although these algorithms are not application specific, and can be tailored to recognize different types of event streams after some initial training phase, they lack the conciseness and flexibility found in PORT. PORT does not require training sets and is expressive enough to specify both frequent and  “needle in the haystack” event sequences with just a few lines of code.
+
+
+\subsection{Event Stream Processing Languages and Algorithms}
+PORT can be categorized as a stream processing language,
+which means it is a domain-specific and
+designed for expressing streaming applications.
+In this section we look at previous work related to stream processing languages.
+
+Pattern matching
+over event streams is a paradigm
+wherein a stream of continuously arriving events are examined for
+possible matches against a previously defined set of rules. Collectively, these matches form a pattern.
+Languages written for pattern matching over event
+streams are significantly richer than those used for regular expression
+matching~\cite{DBLP:conf/sigmod/AgrawalDGI08},
+and typically provide automatic
+support for naming, type checking filtering, aggregating, classifying and
+annotation of incoming events. They also  provide many benefits over traditional
+stream-based text processing languages, such as sed~\cite{Mcmahon1979sed} and
+awk~\cite{DBLP:journals/spe/AhoKW79}.
+
+Although PORT is a stream processing language, it does not
+require all of the features typically
+included in this sort of system, such as
+combining multiple stream sources,
+out of order data retrieval,
+methods for handling data loss,
+time window based event aggregation,
+or database integrations~\cite{DBLP:journals/csur/DayarathnaP18}.
+Rather PORT seems to fit within the special case
+known as complex event processing (CEP),
+in which data items in input streams are referred to as raw events, and data items in output streams
+as composite (or derived) events. A CEP system uses patterns to inspect
+sequences of raw events and then generate a composite event for each
+match~\cite{DBLP:journals/ibmrd/HirzelAGJKKMNSSW13}
+
+Queries and transforms written for CEP systems are
+frequently compiled to a low-level general purpose language (C, C++, etc.) to allow for fast
+processing of the stream. During the compilation process, automata are typically
+built to recognize the patterns specified by the queries. For instance, Agrawal et
+al.~\cite{DBLP:conf/sigmod/AgrawalDGI08} describe how patterns written in the SASE+ stream
+processing language are converted to non-deterministic finite automata. 
+
+MatchRegex~\cite{DBLP:conf/debs/Hirzel12} is a CEP engine for IBM’s Stream Processing
+Language. Predicates defined on the individual events appearing in the
+stream can be utilized in the regular expression-based pattern matching
+engine. MatchRegex supports regular expression operators, such as “Kleene star”
+and “Kleene plus” over patterns consisting of predicates (boolean expressions).
+
+The CEP systems described in this subsection are capable
+of recognizing the same stream patterns as PORT,
+but do not incorporate the
+transformation primitives 
+required by the applications
+envisioned for PORT. Although CEP systems do allow for the
+generation of composite events from raw events,
+they are meant
+to be used solely to recognize additional patterns.
+It is the combination and interplay of pattern matching and transformation
+primitives that distinguishes PORT from CEP systems.
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "paper"
+%%% End:

@@ -1,0 +1,325 @@
+\section{Background and Motivation}
+\label{SEC:background}
+
+
+\subsection{Our Motivating Example}
+\label{sec:MotivatingExample}
+% How SEA showed success using system calls
+
+The initial impetus for this work was sparked by the efforts of Moore et al.~\cite{DBLP:conf/issre/MooreCFW19}
+that lead to the creation of
+the Simulating Environmental Anomalies (SEA) technique.
+This effort centered on the key insight
+that problematic
+environmental properties,
+known as anomalies, are visible in the
+communications between the components that make up an application.
+The researchers found that,
+once captured,
+these anomalies
+could be
+used to simulate and 
+test
+an application as if
+it had been encountered
+in the real world.
+In that work, results of system calls made
+during execution were recorded, modified, and replayed to simulate whether or not the application
+responded correctly to the anomaly.
+Using this strategy, the authors were able to identify a number of bugs
+in major applications.
+
+As a concrete example of the above
+consider the ``Unusual File types'' anomaly
+discussed in the SEA paper's evaluation.
+This anomaly may be problematic
+when an application running under Linux
+attempts to open and read data from a file on disk.
+In addition to ``regular'' files,
+which are used to store text and
+binary data,
+Linux supports several special file types.
+Writing to and
+reading from each of these file types requires special procedures.
+As a result, an application should check the type of files it intends to
+process so that it can handle it correctly.
+The SEA technique
+may simulate the presence of such a file by
+modifying
+the return value
+of a {\tt stat} call.
+Moore et al. accomplish this manually
+by writing a script
+for each anomaly
+to process system call traces.
+PORT improves on this process by
+making it easier to describe
+where and how to make required modifications.
+
+Our takeaway
+from reading this study
+was that an application's activity
+can be systematically mined to find bugs.
+The work described in this paper
+shows that the best way to extract this data
+is to treat application activity
+as a sequence of events,
+thus allowing us to analyze it using
+proven event processing techniques. 
+Yet, it became apparent that existing
+stream processing tools
+are not well suited to this task. We needed a 
+novel tool to leverage
+SEA's success beyond {\tt strace} and system calls to encompass other activity types,
+such as calls to library functions
+and remote procedure calls.
+This could be achieved by operating in a fashion agnostic to the way an application's activity has been recorded. Such a tool would require a distinct language. 
+
+
+%%% What are we really doing here.  WHY did we decided to make this language?
+%%% That's really the question that needs to be answered.  I think that instead
+%%% of making things up that we had the language and decided to apply it here
+%%% we need to talk about how seeing the success of this work motivated us to
+%%% try it at a larger scale.  We can avoid talk of "Augmenting" SEA or
+%%% whatever though
+
+%\subsection{Explaining Environmental Bugs}
+%
+%Before we discuss the details of our bug-finding efforts it is necessary to
+%draw a boundary around the types of bugs we are targeting.
+%This work sets its sights on the bugs that occur when some external
+%entity supplies unexpected or incorrect data to an
+%application resulting in its failure.
+%Such bugs may appear in simple situations like a library function that
+%returns data in an unexpected format or in scenarios as complex
+%as a request to a remote
+%system returning bad data because of corruption on an intermediate network
+%node.
+%Both cases share the commonality that the symptoms of misbehavior
+%can be found in a recording of the application's activity.
+%These bugs, defined by Moore et al. as ``environmental bugs,''
+%often cause applications to fail after deployment
+%and occur with such frequency
+%that the ``works on my machine'' phenomenon is a well known
+%source of pain
+%and frequent topic of discussion
+%in software and project management
+%literature~\cite{worksonmymachine}.
+%Post-deployment bugs are a widespread problem
+%and they come with significant costs
+%both in financial terms and,
+%in the worst cases,
+%loss of life~\cite{WONG201768}.
+%
+%The impact of these bugs continues to be reinforced by the regular
+%appearance of dangerous environmental bugs in major pieces of
+%software~\cite{devzeroroot}.  And it appears that no class of application
+%is safe with environmental bugs affecting operating
+%systems~\cite{ubuntuappaport},
+%user applications~\cite{westerndigitalsymlink} and crucial security
+%programs~\cite{sudocopy} in the
+%last year alone!
+%
+\begin{figure}
+\begin{minipage}{.5\textwidth}
+  \begin{lstlisting}[gobble=4]
+    # Before Modification
+    open("example.txt", O_RDWR, 0) = 3
+    fstat(3, {...}) = 0
+    getpid() = 34355
+    write(3, "Hello World!\n", 13) = 13
+    close(3) = 0
+  \end{lstlisting}
+ \end{minipage}%
+ \begin{minipage}{.5\textwidth}
+  \begin{lstlisting}
+    # After Modification
+    open("example.txt", O_RDWR, 0) = 3
+    fstat(3, {...}) = 0
+    getpid() = 34355
+    write(3, "Hello World!\n", 13) = 13
+    close(3) = -1
+  \end{lstlisting}
+  \end{minipage}
+  \caption{A system call trace of a program that opens, writes to, and closes
+  a file before and after modifying the return value of the \texttt{close()} call.}
+  \label{fig:StraceListing}
+\end{figure}
+
+\subsection{Why a New Domain Specific Language?}
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \begin{lstlisting}[basicstyle=\small,gobble=4,xleftmargin=.8em]
+    event open {filedesc: Number@ret};
+    event read {filedesc: Number@0};
+    event close {filedesc: Number@0,
+                 retval: Number@ret};
+    open({filedesc: fd});
+    not read({filedesc: ?fd});
+    close({filedesc: ?fd});
+  \end{lstlisting}
+  \end{minipage}%
+  \begin{minipage}{.5\textwidth}
+  \begin{lstlisting}[basicstyle=\tiny]
+pattern = Pattern(
+  SeqOperator(
+     PrimitiveEventStructure("OPEN", "a"),
+     NegationOperator(
+        PrimitiveEventStructure("READ","b")
+     ),
+     PrimitiveEventStructure("CLOSE","c")),
+AndCondition(EqCondition(
+     Variable("a", lambda x: x["File Handle"]),
+     Variable("c", lambda x: x["File Handle"])),
+     EqCondition(
+     Variable("c", lambda x: x["File Handle"]),
+     Variable("b", lambda x: x["File Handle"]))),
+timedelta(minutes=10))
+  \end{lstlisting}
+  \end{minipage}
+  \caption{
+  The left listing is a PORT program that finds situations
+  where a program opens a file and closes it without reading from it.
+  The right listing is an OpenCEP listing that identifies the same pattern.
+}
+  \label{fig:CompareListing}
+\end{figure}
+
+
+The decision to create a new domain specific language was not one we
+undertook lightly. 
+as such an effort takes
+a significant amount of work
+to define,
+implement, document, and support. Yet, as we detail in this section, existing systems could not deliver the features we needed. For starters, the language  had to be able to identify specific
+patterns as they appear in a recording of application activity.
+At first glance, it seems a simple model,
+such as a deterministic finite automaton (i.e. a DFA or a FSA), would suffice.
+The description could be written
+in a language similar to
+regular expressions, but enhanced to operate on complex
+structures rather than symbols in a string.
+Unfortunately,the solution is no so simple due to  dependencies
+between activities in these patterns
+across time,
+as shown in Figure~\ref{fig:StraceListing},
+The {\tt open()} call produces a file descriptor that a subsequent {\tt
+read()} call may match.
+Yet, a standard DFA or FSA cannot match patterns with this sort of dependency. 
+Instead, we need a language
+that can easily capture
+the internal contents of events,
+like argument data,
+pointer addresses,
+and return values that can be
+manipulated for
+reuse in subsequent operations.
+
+One possibility is to deploy more expressive automata models, such as register automata~\cite{DBLP:journals/tcs/KaminskiF94} or session automata~\cite{DBLP:journals/corr/BolligHLM14}. Yet, these models cannot produce a modified output and, as the 
+SEA researchers found,  the ability to
+{\textit modify} activity allows researchers to create scenarios that ensure
+application failures rather than  waiting for them to possibly occur.
+Several feature-rich event processing
+languages and libraries do have these capabilities, but
+modifying and outputting
+incoming events
+is by no means a straightforward experience.
+In many cases, producing such an output stream  would require
+falling back on the fully-featured nature of a host language (e.g. Java) -- a situation
+we hoped to avoid.
+
+In the initial stages of PORT's development, we also
+evaluated several
+complex event processing (CEP) languages that
+could
+provide some of the pattern and predicate matching primitives
+that we wished to
+incorporate.
+Sadly,
+these languages did not
+support  the features
+we require,
+or were too complex
+for the easy to use  system we wanted to offer.
+Typically,
+programs for these complex event processing engines are
+written in the engine's build or host language,
+such as Java,
+Scala or
+Python.
+Such languages generally bring with them a great deal of boilerplate code,
+that can obscure or confuse
+the program's meaning.
+Recent studies
+have affirmed that excessive and complicated code
+patterns can harm
+understanding and
+maintainability~\cite{misunderstandings}.
+Further,
+it means that the author,
+and future maintainers,
+of a
+program must be fluent in this host language.
+Finally,
+these languages include features and optimizations
+that would likely not be useful for our application domain, such as time-based event windows,
+merging multiple event streams,
+and the calculation of
+summary statistics over specified fields. 
+
+
+To demonstrate these points concretely,
+we consider two programs that recognize a system call sequence wherein an
+application opens and closes a file
+without reading from it.
+Figure~\ref{fig:CompareListing} shows a PORT program that implements this
+task.  The first three statements in this program define the events (i.e.
+system calls) and parameters relevant to the task it performs.  The final three statements express that the event stream
+should contain an \texttt{open()} call followed by a \texttt{close()} call on the same file descriptor, with no intermittent \texttt{read()} call.
+
+We compare this program 
+\footnote{which can be executed using the code and tools available at: \textit{Link Removed for Blinding Purposes}}
+with a corresponding program written in OpenCEP~\cite{open_cep_website},
+a CEP module for the Python programming language.
+As shown in Figure~\ref{fig:CompareListing},
+the PORT program is both more concise with its main work being done in just
+three lines of code, and more readable because it is not constrained by the
+requirements of a host programming language.
+Unlike  OpenCEP and similar languages, PORT can modify and output an event.
+That is, the program in Figure~\ref{fig:CompareListing} could be
+re-purposed to not only find the appropriate pattern but also modify the
+results of the {\tt close} call to simulate a failure.
+This would be achieved
+by editing line 8 of the program to contain an output
+clause as follows:
+\begin{lstlisting}[numbers=none,xleftmargin=0em,gobble=2,columns=strict]
+  close({filedesc: ?fd}) -> close({retval: -1});
+\end{lstlisting}
+If the modified PORT program is executed on the system call trace shown in the upper half of Fig.~\ref{fig:StraceListing}, it will produce the modified system call trace shown in the bottom half.
+
+% A domain specific language like PORT provides a more
+% concise syntax that makes it easier for all individuals to read and
+% write relevant programs in.
+% In light of this, we believe the benefits of a
+% new programming language
+% focused on letting its users get a lot of work done
+% with a small amount of easily-readable code should be self-evident.
+
+% The second front involves PORT's programming paradigm.
+% While other event processing languages tend toward functional or
+% declarative programming,
+% PORT programs more closely follow an imperative programming style.
+% We came to this decision because studies
+% have shown that developers are more likely to be familiar and comfortable
+% with such a paradigm~\cite{XXXX}.  We believe this will make it easier for
+% developers to learn the language, foster greater popularity, and it aligns
+% with the goals presented in our motivating example.
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "paper"
+%%% End:

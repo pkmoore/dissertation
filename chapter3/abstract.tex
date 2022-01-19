@@ -1,0 +1,45 @@
+\begin{abstract}
+
+A common problem for developers
+is applications exhibiting
+new bugs \textit{after} deployment.
+Many of these bugs
+can be traced to
+unexpected network,
+operating system,
+and file system
+differences that cause
+program executions that were successful in a
+development environment to fail once deployed.
+Preventing these bugs is difficult because
+it is impractical to test an application
+in every environment.
+Enter Simulating Environmental Anomalies (SEA),
+a technique that utilizes evidence
+of one application's failure
+in a given environment
+to generate tests
+that can be applied to \textit{other} applications,
+to see whether they suffer from analogous faults.
+In SEA, models of unusual properties extracted
+from interactions between an application, $A$,
+and its environment guide simulations
+of another application, $B$, running
+in the anomalous environment.
+This reveals faults $B$
+may experience in this environment
+without the expense of deployment.
+By accumulating these anomalies,
+applications can be tested against
+an increasing set of problematic conditions.
+We implemented a tool called CrashSimulator, which uses SEA,
+and evaluated it against Linux applications
+selected from coreutils and the Debian popularity contest.
+Our tests found a total of 63 bugs
+in 31 applications
+with effects including hangs,
+crashes,
+data loss,
+and remote denial of service conditions.
+
+\end{abstract}

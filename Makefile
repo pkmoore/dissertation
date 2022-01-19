@@ -8,7 +8,6 @@ dvi: $(PAPER).dvi
 SECTIONS = \
 	*.tex \
 	*.bib \
-	*.pdf
 
 TEXT =  $(SECTIONS) 
 
