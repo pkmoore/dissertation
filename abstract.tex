@@ -1,28 +1,114 @@
-\vspace*{3ex plus 0.6fil}
+%\vspace*{3ex plus 0.6fil}
 \begin{center}
 \addcontentsline{toc}{chapter}{Abstract}
 
 {\large\bf
    AN ABSTRACT\\[3ex]
-%% Title
-   FANCY RESEARCH RESULTS OF WORLD-WIDE IMPORTANCE\\[2ex]
+   A PORT in Stormy SEAs: Using Past Problems to Prevent Future Failures\\[2ex]
    by\\[3ex]
-   Generic M.\ Student\\[3ex]
+   Preston K.\ Moore\\[3ex]
    %% Advisor name
-   Advisor: Ver E.\ Important\\[2ex]
+   Advisor: Justin\ Cappos\\[2ex]
    %% Co-advisor, or comment out
-   Co-Advisor: NAME, IF THERE IS A CO-ADVISOR
+   Co-Advisor: Phyllis Frankl
 }\\[3ex]
 Submitted in Partial Fulfillment of the Requirements\\[2ex]
 for the Degree of Doctor of Philosophy (Computer Science)\\[3ex]
 % The date appearing on the title page should be the month and year of
-% the expected degree award (e.g., January 20XX or May/June 20XX) 
+% the expected degree award (e.g., January 20XX or May/June 20XX)
 % and not the completion date of the work.
-Month 20xx
+May 2022
 \end{center}
 
 \vspace*{2.5ex}
 
-\lipsum[2-4]
+%Paragraph 1
+%%Software repositories, or servers that host and distribute
+%%software updates, are becoming increasingly important in a wide variety of
+%%settings,
+
+In order to scale with demand software must be deployed and executed on
+many diverse platforms.
+Unfortunately,
+the differences between these plantforms,
+if not handled appropriately,
+can cause event well-tested applications to fail after deployment.
+It is difficult to anticipate and handle all the different combinations of
+software and hardware that can affect an application’s ability to operate
+in a given deployment environment.
+To make matters worse,
+recovering from these post-deployment failures it is expensive and
+detrimental to user experince.
+What is needed is a way to detect situations where an application may fail
+\textit{before} it is deployed so that its deficiencies can be corrected.
+
+In searching for an answer to this problem one key observation stands out:
+the causes of these environment-related failures,
+referred to as anomalies,
+are often visible in the
+communications between an application and its environment such as the
+system calls it makes or the messages it sends across a network.
+We developed two systems that allow developers to catch environmental bugs
+before deployment by taking advantage of this property.
+The first,
+which we refer to as the SEA technique,
+allows developers to record the environmental features from an environment
+that have caused one application to fail and use them to identify other
+applications that are likely to similarly fail when deployed to that same
+environment.
+The second,
+known as PORT,
+is a domain specific language that allows developers
+to quickly write expressive programs that can analyze a stream made up of
+an application’s communications with its environment.
+PORT programs can both detect opportunities to
+simulate a failure-causing feature \textit{and} modify the stream so that
+the feature is present.
+
+To realize the SEA technique we implemented a tool called CrashSimulator.
+It allows developers to capture environmental anomalies visible in the
+system calls and application makes and use them to test applications to see
+if they would fail were they to exprience them in reality.
+We were able to use CrashSimulator to find many high impact bugs in
+popular,
+battle tested applications.
+
+Next, we conducted a user study with CrashSimulator in order to determine
+how well developers with varying skill levels could use it.
+This study found that,
+while these developers could use the tool successfully,
+capturing new anomalies was difficult.
+As a result of this finding we create PORT,
+a domain specific language
+specifically tailored toward recognizing patterns and making modifications
+to streams of application activity.
+Our goal was to ease the process of
+writing checkers and mutators so that SEA could easily and widely used.
+
+To see how well PORT achieved its intended purpose it to recreate and
+replace the checkers and mutators used in our original SEA work.
+These new PORT programs were shorter, easier to read, afnd easier to
+maintain than the lengthy and complex Python scripts they replaced.
+We also took advantage of PORT's extensibility by expanding SEA to USB
+traffic.
+This allowed us to write programs that could identify patterns in and
+modify streams of USB traffic.
+Using this capability we were able to write programs that could
+detect BADUSB style attacks in recorded streams and modify innocent streams
+so that they containd simulated attacks.
+The former could be used alongside a USB capture program to detect attacks
+on real systems while the latter could be used to test existing defenses.
+
+%Paragraph 4
+Our hope is that these tools and techniques will see wide
+adoption and use in improving application reliability and security.
+We see production-ready versions of these tools being used in continuous
+integration and deployment pipelines in order to allow current and future
+applications to be tested against an ever-increasing repository of
+environmental bugs.
+We also see a world where developers can exchange PORT programs so as a
+means of distributing knowledge about what situations have caused failures
+so that applications that have never had to experience a situation can
+be protected against them.
 
 \vspace*{3ex plus 1fil}
