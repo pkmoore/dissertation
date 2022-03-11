@@ -6,7 +6,7 @@ pdf-missing-graphics: $(PAPER).pdf-without-pdflatex
 dvi: $(PAPER).dvi
 
 SECTIONS = \
-	*.tex \
+	**/*.tex \
 	*.bib \
 
 TEXT =  $(SECTIONS) 

@@ -143,22 +143,21 @@ can end up completely filling disks, exhausting available memory,
 \end{itemize}
 
  \begin{table}[t]
-    \scriptsize{}
-    \begin{tabular}{l p{1cm} p{1cm} p{1.2cm} p{1cm}}
+    \centering
+    \begin{tabular}{l c c c c}
     \toprule{}
         Application     & Source Replaced & Preserve Xattrs & Preserve Timestamps & Copying Devices\\
 \hline
-        {\tt mv}              & Correct             & Correct         & Correct             & Correct\\
-        {\tt mmv}             & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & Correct\\
-        {\tt install}         & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
-        {\tt perl File::Copy} & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
-        {\tt shutils}         & {\bf Corrupt}	& {\bf Sec. Flaw} 	& Correct             & Correct\\
-        {\tt rust}             & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
-        {\tt boost::copyfile} & {\bf Corrupt}	      & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt mv}              & Correct             & Correct             & Correct         & Correct\\
+        {\tt mmv}             & Correct             & {\bf Security Flaw} & {\bf Time Loss} & Correct\\
+        {\tt install}         & Correct             & {\bf Security Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt perl File::Copy} & Correct             & {\bf Security Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt shutils}         & {\bf Corrupt}       & {\bf Security Flaw} & Correct         & Correct\\
+        {\tt rust}            & Correct             & {\bf Sec. Flaw}     & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt boost::copyfile} & {\bf Corrupt}       & {\bf Sec. Flaw}     & {\bf Time Loss} & {\bf Fill Disk} \\
     \bottomrule{}
     \end{tabular}
-    \setlength{\belowcaptionskip}{-16pt}
-    \caption{Applications and libraries analyzed to determine whether or not
+    \caption{Applications and libraries analyzed to determine whether or nt
       they are able to correctly move a file from one device to another.
 Incorrect entries are either missing the needed check to ensure correct
      behavior or their implementation of the behavior was ineffective.}
@@ -287,7 +286,8 @@ fill all available memory or disk space~\cite{Cappos_CCS_08}.
 
 \begin{table*}[t]
     \scriptsize{}
-    \begin{tabular}{l  l  |  l  l  l  l  l  l  l}
+    \centering
+    \begin{tabular}{l  l  |  p{1cm}  p{1cm}  p{1cm}  p{1cm}  p{1cm}  p{1cm} p{1cm}}
     \toprule{}
         Application       & Condition Tested           & Regular File           & Directory               & Character Device        & Block Device           & Named Pipe                 & Symbolic Link             & Socket File \\
                           &                            &  (IFREG)               & (IFDIR)                 & (IFCHR)                 & (IFBLK)                & (IFIFO)                    & (IFLNK)                   & (IFSOCK)\\
@@ -315,7 +315,6 @@ fill all available memory or disk space~\cite{Cappos_CCS_08}.
         application}}\\
     \bottomrule{}
     \end{tabular}
-    \setlength{\belowcaptionskip}{-13pt}
     \caption{Applications tested for their handling of unexpected file types.  A
     result of ``\tickmark'' indicates that the application identified the
     presence of an unusual file and responded in some fashion.  A result of
@@ -328,12 +327,11 @@ fill all available memory or disk space~\cite{Cappos_CCS_08}.
 
 
 \begin{table}[t]
-    \scriptsize{}
-    \scalebox{.82}{
+    \centering
     \begin{tabular}{l  l  l  l  l  l  l  l  l}
     \toprule{}
         Application         & Directory                 & Character Device & Block Device  & Named Pipe \\
-                 & (IFDIR)                   & (IFCHR) & (IFBLK) & (FIFO) \\
+                            & (IFDIR)                   & (IFCHR) & (IFBLK) & (FIFO) \\
 \hline
         {\tt wc}            & Error: Is a Directory     & hangs       & slowly process file  & Hangs\\
         {\tt install}       & Error: Omitting Directory & Fills disk  & slowly copies file   & Hangs\\
@@ -344,7 +342,7 @@ fill all available memory or disk space~\cite{Cappos_CCS_08}.
         {\tt pr}            & Error: Is a Directory     & hangs       & garbage output       & Hangs\\
 \hline
     \bottomrule{}
-    \end{tabular}}
+    \end{tabular}
     \caption{Responses of a sample of coreutils applications when exposed to
       anomalous conditions.  The character device used was the infinite-length {\tt
         /dev/urandom}.}
@@ -428,7 +426,7 @@ libraries from a selection based on Debian's ratings~\cite{DebPopCon}
 could be vulnerable to this sort of attack.
 
 \begin{table}[t]
-  \scriptsize{}
+    \centering
   \begin{tabular}{l | l}
     \toprule{}
     {\bf Application}              & {\bf Analysis Result}\\
@@ -444,7 +442,6 @@ could be vulnerable to this sort of attack.
     {\tt python-websocket-client}  & No {\tt poll()} or {\tt select()}, no timeout set \\
     \bottomrule{}
   \end{tabular}
-  \setlength{\belowcaptionskip}{-11pt}
   \caption{Applications tested for their handling of extremely slow response
     times from the host with which they are communicating }
   \label{table:slowloris}
@@ -575,25 +572,23 @@ operation, CrashSimulator simply runs two checkers in parallel
 and accepts the execution if either detects the expected sequence.
 
 \begin{table}[t]
-    \scriptsize{}
+    \centering
     \begin{tabular}{l | l }
     \toprule{}
       {\bf Operation}                                               & {\bf Potential System calls}\\
-      Examine source file                                     & stat64(), lstat64(), fstat64()\\
-      Examine destination file                                & stat64(), lstat64(), fstat64()\\
-      Open source file                                        & open()\\
-      Read contents of source file                            & read(), splice() with a pipe\\
-      List source file's & \\ ~~~~~extended file attributes             & listxattr(), llistxattr(), flistxattr()\\
-      %Read contents of source file's extended file attributes & getxattr(), lgetxattr(), fgetxattr()\\
-      Read contents of source file's                    & \\
-      ~~~~~~~extended file attributes & getxattr(), lgetxattr(), fgetxattr() \\
-      Open destination file                                   & open(), optionally unlink() the file first\\
-      Write contents to destination file                      & write(), splice() with a pipe\\
-      Apply extended file attributes to & \\ ~~~~~destination file      & setxattr(), lsetxattr(), fsetxattr()\\
-      Apply proper timestamps to & \\ ~~~~~destination file             & utimens(), futimens()\\
-      Apply proper permissions & \\ ~~~~~to destination file            & chmod(), open() with a modeline specified\\
-      Close the source file                                   & close()\\
-      Close the destination file                              & close()\\
+      Examine source file                                           & stat64(), lstat64(), fstat64()\\
+      Examine destination file                                      & stat64(), lstat64(), fstat64()\\
+      Open source file                                              & open()\\
+      Read contents of source file                                  & read(), splice() with a pipe\\
+      List source file's extended file attributes                   & listxattr(), llistxattr(), flistxattr()\\
+      Read contents of source file's extended file attributes       & getxattr(), lgetxattr(), fgetxattr()\\
+      Open destination file                                         & open(), optionally unlink() the file first\\
+      Write contents to destination file                            & write(), splice() with a pipe\\
+      Apply extended file attributes to destination file            & setxattr(), lsetxattr(), fsetxattr()\\
+      Apply proper timestamps to destination file                   & utimens(), futimens()\\
+      Apply proper permissions to destination file                  & chmod(), open() with a modeline specified\\
+      Close the source file                                         & close()\\
+      Close the destination file                                    & close()\\
     \bottomrule{}
     \end{tabular}
     \caption{Each step of a successful cross-disk file move operation mapped to
@@ -672,10 +667,10 @@ Types'' anomaly discussed earlier.
 Table~\ref{table:performance} shows these results.
 
  \begin{table}[t]
-    \scriptsize{}
-    \begin{tabular}{l p{1cm} p{1cm} p{1.2cm} p{1cm}}
+     \centering
+     \begin{tabular}{l p{2cm} p{2cm} p{2cm} p{2cm}}
     \toprule{}
-        Application     & Native Execution Time & Initial Recording Time & CrashSimulator Replay Time & rr Replay Time  \\
+        Application     & Native Execution Time & Initial Recording Time & CrashSim. Replay Time & rr Replay Time  \\
 \hline
         {\tt wc}        & 0m0.007s              & 0m0.473s               & 0m0.668s                   & 0m0.112s        \\
         {\tt fmt}       & 0m0.007s              & 0m0.321s               & 0m0.707s                   & 0m0.111s        \\
@@ -685,7 +680,6 @@ Table~\ref{table:performance} shows these results.
         {\tt pr}        & 0m0.135s              & 0m0.888s               & 0m1.017s                   & 0m0.141s        \\
     \bottomrule{}
     \end{tabular}
-    \setlength{\belowcaptionskip}{-16pt}
     \caption{This table contains the times required to execute several coreutils applications under different conditions.
              Native execution time is the time required to execute the application from the command line while
              CrashSimulator Replay time is the time required to execute it with the tool, using the null mutator with no checker configured.
