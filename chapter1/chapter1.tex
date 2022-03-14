@@ -1,29 +1,103 @@
 %% Chapter 1
 \chapter{Introduction}
 \label{chap:intro}
+\textit{No Battle Plan Survives Contact With the Enemy --- Helmuth von Moltke}
 
-\lipsum[2-4]
+Given the way everything is scaling up we are expecting software to run in
+a ever-growing set of increasingly diverse environments.
 
+No matter how well an application is tested before its release,
+new bugs always seem to emerge after deployment.
+Oracle estimates that 40\% of deployed applications
+contain critical defects -- a situation that is compounded
+by the fact that deployment
+increases the cost to fix these flaws by 100 fold~\cite{OracleAppQuality}.
+One reason for this outcome
+is that these applications will operate within a diverse set of
+deployment \emph{environments},
+and variations between these environments tend to
+reveal previously undiscovered flaws.
+These flaws emerge from
+such factors as
+operating system APIs changing across versions
+~\cite{LinuxGlibcChanges, WinAPICompat, MuslDifferences},
+or small variations in file systems exhibiting subtle but critical
+differences~\cite{EXT4Layout, AppleHFS, WindowsNTFS}.
+Even if the network and adapter are identical,
+network behavior can still diverge from what is expected~\cite{vbox,
+NMAPOSDifferences, VMWareNATFailure},
+and these environmental differences greatly exacerbate
+the chance that an application will function incorrectly when deployed.
 
-\section{Motivation}
-\label{sec:motivation}
+These unforeseen bugs
+complicate the work of 43\% of application developers who, according to a
+recent survey conducted by ClusterHQ~\cite{ClusterHQSurvey},
+spend between 10\% and 25\% of their time
+debugging errors that only appear in production.
+Numerous efforts have been made to reduce this burden.
+One approach
+is to hide environmental differences behind standard interfaces.
+Unfortunately,
+even specialized ``Write-Once, Run Anywhere'' environments
+that attempt to hide these differences,
+such as the Java Runtime Environment,
+are not perfect,
+leading them to be rechristened ``Write-Once, Debug Everywhere''~\cite{WODE}.
+A more direct approach would be
+to identify and fix deficiencies before deployment,
+but history has shown that,
+even if enormous effort is put forward,
+it may be insufficient to uncover these bugs.
+Microsoft employs thousands of engineers with nearly a
+1:1 ratio of testers to developers~\cite{Page2009}.
+Yet, a recent Windows Update released
+in response to the Spectre Intel CPU vulnerability
+resulted in machines with certain hardware configurations
+being rendered unbootable~\cite{kb4056892}.
 
-\lipsum[5-8]
+What is needed is a methodical way to record, preserve, and test against
+specific features of any environment proven to have caused incorrect
+behavior in applications. We achieve this by cataloging these
+features, which we call \textit{anomalies}, and
+offering a systematic and reproducible strategy for
+future application tests, without
+requiring per application effort.
 
-\section{History and previous research}
-\label{sec:history}
+In this thesis we document our efforts to achieve this capability using two
+novel techniques....
 
-\lipsum[9-12]
+The first technique is SEA which lets you capture stuff...
+We used this to write CrashSimulator
 
-\section{Our contributions}
-\label{sec:contribution}
+The second is PORT that yadda yadda yadda...
 
-\lipsum[13-16]
+\section{The SEA Technique and Crash Simulator}
+
+\section{Pattern Observation Recognition and Transformation}
+
 
 \section{Organization of the thesis}
 \label{sec:organization}
+Chapter~\ref{chap:background}
+presents an overview of environmental bugs including where they
+appear and how they can be detected.
+Chapter~\ref{chap:sea}
+discusses CrashSimulator -- our implementation of the SEA
+technique over system calls.
+Chapter~\ref{chap:userstudy}
+covers a user study conducted with CrashSimulator that
+verified some of the tool's strengths and pointed out some weaknesses.
+Chapter~\ref{chap:port}
+discusses PORT,
+our new domain specific language that addresses these weaknesses by to make
+it easy to find and modify interesting portions of streams of
+application activity.
+Chapter~\ref{chap:relatedword}
+compares our tools and techniques to related work.
+Finally,
+Chapter~\ref{chap:conclusion} offers our closing thoughts and hopes for
+the future of this work.
 
-\lipsum[17]
 
 \begin{figure}
   \centering
@@ -31,5 +105,3 @@
   \caption{The organization of this thesis}
   \label{fig:organization-1}
 \end{figure}
-
-\lipsum[18]
