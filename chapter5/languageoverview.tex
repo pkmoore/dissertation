@@ -30,10 +30,10 @@ A PORT transducer processes an input event stream as follows (illustrated in Fig
 Each item in an input
 sequence is examined and the transducer's internal state is updated accordingly.
  Output is then produced based on the rules described in the transducer's program.
- In this way, 
+ In this way,
  the transducer itself can be thought of as a finite sequence of \emph{actions}
- that may or may not be executed based on the values in the input stream. 
- The state of the transducer keeps track of the next action to be executed, as well as a valuation of a 
+ that may or may not be executed based on the values in the input stream.
+ The state of the transducer keeps track of the next action to be executed, as well as a valuation of a
  finite number of \emph{registers} that hold data values.
  Whether or not an action is executed depends on a combination of the transducer state
  and the values of the current event.
@@ -43,7 +43,7 @@ event from the input stream, which may update some of the registers, and then wr
 
 \begin{figure}[t]
   \centering
-  \includegraphics[scale=.6]{chapter4/images/processing}
+  \includegraphics[scale=.6]{chapter5/images/processing}
   \caption{A transducer individually processes each item in an input
   sequence, updating its internal state and producing output according
   to the rules described in its program.}
@@ -66,7 +66,7 @@ event from the input stream, which may update some of the registers, and then wr
 %selecting specific events out of an activity stream.
 %
 %Implementing
-%a program written in PORT 
+%a program written in PORT
 %to identify a pattern of activity works as follows.
 %As illustrated in Figure~\ref{fig:Processing}, a pattern is encoded as a list of datawords, and compared against
 %events from the
@@ -120,7 +120,7 @@ event from the input stream, which may update some of the registers, and then wr
 %
 %
 %A PORT program can be divided into two sections, the preamble and the body, as shown in
-%Figure~\ref{lst:PreambleBody}. 
+%Figure~\ref{lst:PreambleBody}.
 %The preamble defines the sorts of events
 %expected
 %to appear in an input event stream and the set of parameters
@@ -132,7 +132,7 @@ event from the input stream, which may update some of the registers, and then wr
 %
 %The body of a PORT program consists of a list of datawords that
 %will configure the states and transitions
-%of a mutator. 
+%of a mutator.
 %Each dataword (excluding usages of the NOT operator, discussed further
 %in~\ref{subsub:NOT}) configures a single
 %state and sets the rules that will govern how the mutator transitions into that state.
@@ -156,7 +156,7 @@ event from the input stream, which may update some of the registers, and then wr
 \label{sub:SyntaxAndSemantics}
 
 Figure~\ref{lst:SyntaxGrammar} shows the grammar of PORT's core language.
-A program is split into two parts: the \emph{preamble} consisting of type and event definitions, and the \emph{body} of the program which consists of a sequence of actions. 
+A program is split into two parts: the \emph{preamble} consisting of type and event definitions, and the \emph{body} of the program which consists of a sequence of actions.
 
 \begin{figure}[t]
 \centering
@@ -263,7 +263,7 @@ Using this syntactic short-hand, the action given above can be expressed more co
 
 
 \paragraph*{Implicit repetition and negated patterns}
-%In our design of PORT we have decided against the inclusion of the repetition and choice constructs supported by general-purpose stream processing languages. This design decision greatly simplifies the transducer construction as we do not have to deal with elimination of epsilon transitions expressing nondeterministic choice. 
+%In our design of PORT we have decided against the inclusion of the repetition and choice constructs supported by general-purpose stream processing languages. This design decision greatly simplifies the transducer construction as we do not have to deal with elimination of epsilon transitions expressing nondeterministic choice.
 
 PORT simplifies the handling of an unbounded input stream by using implicit repetition semantics.
 Any event in the input stream not matched by the current action is simply copied to the output stream. The transducer moves on by attempting to match the next input event against the current action.

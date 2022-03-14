@@ -1,68 +1,7 @@
-\section{Introduction}
-\label{SEC:introduction}
-\textit{No Battle Plan Survives Contact With the Enemy --- Helmuth von Moltke}
+\chapter{The SEA Technique and CrashSimulator}
+\label{chap:sea}
 
-No matter how well an application is tested before its release,
-new bugs always seem to emerge after deployment.
-Oracle estimates that 40\% of deployed applications
-contain critical defects -- a situation that is compounded
-by the fact that deployment
-increases the cost to fix these flaws by 100 fold~\cite{OracleAppQuality}.
-One reason for this outcome
-is that these applications will operate within a diverse set of
-deployment \emph{environments},
-and variations between these environments tend to
-reveal previously undiscovered flaws.
-These flaws emerge from
-such factors as
-operating system APIs changing across versions
-~\cite{LinuxGlibcChanges, WinAPICompat, MuslDifferences},
-or small variations in file systems exhibiting subtle but critical
-differences~\cite{EXT4Layout, AppleHFS, WindowsNTFS}.
-Even if the network and adapter are identical,
-network behavior can still diverge from what is expected~\cite{vbox,
-NMAPOSDifferences, VMWareNATFailure},
-and these environmental differences greatly exacerbate
-the chance that an application will function incorrectly when deployed.
-
-These unforeseen bugs
-complicate the work of 43\% of application developers who, according to a
-recent survey conducted by ClusterHQ~\cite{ClusterHQSurvey},
-spend between 10\% and 25\% of their time
-debugging errors that only appear in production.
-%Participants in this survey cited the inability to recreate
-%production environments for
-%testing as the main reason why bugs are not discovered earlier.
-Numerous efforts have been made to reduce this burden.
-One approach
-is to hide environmental differences behind standard interfaces.
-Unfortunately,
-even specialized ``Write-Once, Run Anywhere'' environments
-that attempt to hide these differences,
-such as the Java Runtime Environment,
-are not perfect,
-leading them to be rechristened ``Write-Once, Debug Everywhere''~\cite{WODE}.
-A more direct approach would be
-to identify and fix deficiencies before deployment,
-but history has shown that,
-even if enormous effort is put forward,
-it may be insufficient to uncover these bugs.
-Microsoft employs thousands of engineers with nearly a
-1:1 ratio of testers to developers~\cite{Page2009}.
-Yet, a recent Windows Update released
-in response to the Spectre Intel CPU vulnerability
-resulted in machines with certain hardware configurations
-being rendered unbootable~\cite{kb4056892}.
-
-What is needed is a methodical way to record, preserve, and test against
-specific features of any environment proven to have caused incorrect
-behavior in applications. We achieve this by cataloging these
-features, which we call \textit{anomalies}, and
-offering a systematic and reproducible strategy for
-future application tests, without
-requiring per application effort.
-
-In  this paper, we document the development and implementation of a new
+In  this chapter, we document the development and implementation of a new
 approach to finding and preserving anomalies that we call \textit{Simulating
 Environmental Anomalies} (SEA). This technique is founded upon the key
 insight that problematic environmental properties can often be detected
@@ -100,7 +39,7 @@ filesystem damage.  In total, the SEA technique was able to identify 65
 bugs with much less
 time and effort than would be required to set up real environments and
 execute the same applications within them -- illustrating SEA's
-usefulness for developers in a real-world setting.
+usefulness for developers in a real-world settin.
 
 The main contributions in this work can be summarized as follows:
 
@@ -117,7 +56,7 @@ can be assessed before deployment---
 without the time and resource costs of
 testing in each environment.}
 
-\item{It allows developers to build a corpus of extracted anomalies and thus 
+\item{It allows developers to build a corpus of extracted anomalies and thus
 increase their capability to test applications against
 problematic environmental aspects without per application effort.}
 
