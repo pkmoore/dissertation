@@ -27,35 +27,33 @@ May 2022
 %%software updates, are becoming increasingly important in a wide variety of
 %%settings,
 
-In order to scale with demand software must be deployed and executed on
+In order to be able to scale with demand software must be deployed and executed on
 many diverse platforms.
-Unfortunately,
-the differences between these plantforms,
-if not handled appropriately,
-can cause event well-tested applications to fail after deployment.
-It is difficult to anticipate and handle all the different combinations of
+Unfortunately, if not handled appropriately, 
+the differences between these platforms,
+can cause even well-tested applications to fail upon deployment.
+Anticipating and handling all the different combinations of
 software and hardware that can affect an application’s ability to operate
-in a given deployment environment.
+in a given deployment environment is almost impossible.
 To make matters worse,
-recovering from these post-deployment failures it is expensive and
-detrimental to user experince.
+recovering from these post-deployment failures is expensive and
+detrimental to user experience.
 What is needed is a way to detect situations where an application may fail
-\textit{before} it is deployed so that its deficiencies can be corrected.
+\textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a failure.
 
-In searching for an answer to this problem one key observation stands out:
+In searching for an answer to this problem one key observation became clear:
 the causes of these environment-related failures,
 referred to as anomalies,
-are often visible in the
-communications between an application and its environment such as the
+often can be seen in the
+communications between an application and its environment, such as the
 system calls it makes or the messages it sends across a network.
-We developed two systems that allow developers to catch environmental bugs
-before deployment by taking advantage of this property.
+By taking advantage of this property, we were able to design two systems that allow developers to catch environmental bugs
+before an application is deployed. 
 The first,
 which we refer to as the SEA technique,
-allows developers to record the environmental features from an environment
-that have caused one application to fail and use them to identify other
-applications that are likely to similarly fail when deployed to that same
-environment.
+allows developers to record features from an environment
+that has caused one application to fail and use them to identify which other
+applications are likely to fail in a similar manner when deployed to that same environment.
 The second,
 known as PORT,
 is a domain specific language that allows developers
@@ -67,8 +65,8 @@ the feature is present.
 
 To realize the SEA technique we implemented a tool called CrashSimulator.
 It allows developers to capture environmental anomalies visible in the
-system calls and application makes and use them to test applications to see
-if they would fail were they to exprience them in reality.
+system calls an application makes and use them to test applications to see
+if they would fail were they to experience them in reality.
 We were able to use CrashSimulator to find many high impact bugs in
 popular,
 battle tested applications.
@@ -87,7 +85,7 @@ writing checkers and mutators so that SEA could easily and widely used.
 
 To see how well PORT achieved its intended purpose it to recreate and
 replace the checkers and mutators used in our original SEA work.
-These new PORT programs were shorter, easier to read, afnd easier to
+These new PORT programs were shorter, easier to read, and easier to
 maintain than the lengthy and complex Python scripts they replaced.
 We also took advantage of PORT's extensibility by expanding SEA to USB
 traffic.
