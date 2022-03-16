@@ -1,0 +1,556 @@
+ \section{SEA Related Work}
+\label{SEC:related-work}
+
+In constructing SEA and CrashSimulator, we examined a number of previous
+studies in bug detection, data mining, the influence of environment on
+application behavior, and protocols for checking program responses to anomalous
+situations. This section
+summarizes a few earlier initiatives in each of these areas and discusses
+their relevance to the development of our tool.
+
+% One of the major limitations of many automated testing tools is a reliance
+% on the availability of a target application's source code.  Out of the top
+% XXX automated testing tools (as ranked by YYYY), ZZZZ have this
+% dependency.\preston{cite} While open source software has dramatically
+% increased in popularity over recent years, closed source dependencies are
+% still a major concern.\preston{cite}  Any tool that requires access to
+% source code will have diminished capability in projects incorporating
+% closed source components.
+
+
+\iffalse
+While there is a vast amount of literature on test
+generation~\cite{ammann2008introduction, mcminn2004search,
+  puasuareanu2009survey, dias2007survey}, much less work
+has focused on issues of portability, and tests of whether software
+behaves consistently in different environments.  Prior work on
+CheckAPI~\cite{rasley2015detecting} and
+NetCheck~\cite{Zhuang_NSDI_2014} begins to fill this gap and this paper
+builds upon those results.
+%
+%\paragraph{Detecting Environmental Bugs.}
+%
+%NetCheck; CheckAPI; stub injection; detecting machine specific bugs
+%(e.g. numeric/memory limitations); testing error handlers; \dots
+
+
+Crash reproduction by test case mutation~\cite{DBLP:conf/sigsoft/XuanXM15}.
+
+\fi
+
+
+\noindent
+{\bf Static analysis. }
+\label{rel-static-analysis}
+Tools based on static analysis techniques, such as abstract interpretation,
+model checking, and symbolic execution, have been successfully
+used to
+detect bugs resulting from incorrect API usage. Examples of these tools
+include
+SLAM~\cite{Ball_adecade, Ball:2002:SLP:503272.503274} and, more recently,
+CORRAL~\cite{DBLP:conf/sigsoft/LalQ14} for conformance checking of Windows
+device drivers against the Windows kernel API,
+FindBugs~\cite{DBLP:conf/oopsla/HovemeyerP04} for detecting API usage bugs
+in Java programs, FiSC~\cite{Musuvathi04modelchecking} for finding bugs in
+TCP implementations, and the Explode
+system~\cite{Yang:2006:ELG:1298455.1298469} for detecting crash recovery
+bugs in file system implementations.  Likewise, INFER has found success at
+Facebook in analyzing units of code as they are
+committed~\cite{INFERFacebook}. Unlike CrashSimulator, these
+approaches depend on the availability of source or byte code.
+
+Static analysis techniques have also been
+used to detect portability issues related to what happens when an
+application encounters different
+versions of the external components on which
+it depends~\cite{silakov2010improving, javacompliance-www}. Like
+CrashSimulator, these techniques
+address the application's interactions with its
+environment. However, these studies were focused on proving that the
+environments behaved as expected.
+CrashSimulator is only interested in the application's
+response to anomalies.
+
+\iffalse
+\noindent
+{\bf Specification and run-time verification.}
+Substantial work has been done in validating API and protocol behaviors,
+e.g., finding faults in the Linux TCP implementation, SSH2 and
+RCP~\cite{Udrea:2008}, BGP configuration~\cite{Feamster:2005}, and
+identifying network vulnerabilities~\cite{ritchey-sp00}.
+\fi
+
+\noindent
+{\bf API protocol mining.}
+Extensive work has been done on mining source code to learn API protocols
+and use them to detect common usage violations, such as missing method calls
+(see, e.g.,~\cite{mariani2007compatibility,
+DBLP:journals/ase/WasylkowskiZ11, DBLP:conf/icse/PradelJAG12,
+DBLP:journals/tosem/MonperrusM13, DBLP:conf/icse/JamrozikSZ16}). These
+techniques primarily target object component interactions, rather than
+system calls to generate test suites. However, the techniques explored in
+these works could be used to mine system call patterns in source code.
+This will enable researchers
+to find checkers that identify incorrect responses to environmental
+anomalies. So far, we have specified these checkers manually for
+CrashSimulator.  Data mining techniques could be adapted in the years
+ahead to reduce the manual effort required.
+
+\noindent
+{\bf Tracing and log mining.}
+Similar to API protocol mining, substantive work has been done using
+log files to detect anomalies~\cite{pinpoint,
+jiang_abnormal_trace_detection_icac_2005, xu2009detecting, lou2010mining2}
+and to aid in program understanding~\cite{yuan2010sherlog,
+beschastnikh_synoptic_fse_2011, csight_icse_2014}.
+For example, CheckAPI~\cite{rasley2015detecting}
+and NetCheck~\cite{Zhuang_NSDI_2014} both
+use system call traces to diagnose an application's violations of
+cross-platform portability.  CrashSimulator in some ways takes these
+techniques a step further by using
+system call traces
+to test responses to known environmental anomalies.
+This more active approach can expose bugs that
+are invisible to passive log mining.
+
+
+\noindent
+{\bf Environmental influence and cross-platform portability.}
+Negotiating the influence of the environment in which an
+application is deployed has been investigated from several
+perspectives. One approach, referred to previously,
+is to build ``portable'' systems
+that have cross-platform capabilities.
+Using wrapper subroutines
+can enable cross-platform portability
+of APIs~\cite{bartolomeicompliance} through system call delegation.
+These wrappers can be automatically generated through techniques like
+system call interposition~\cite{Guo:2011:CUS:2002181.2002202}, a
+technique that can also be used to detect and prevent security
+violations~\cite{Hofmeyr:1998:IDU:1298081.1298084,
+Acharya:2000:MUP:1251306.1251307}.
+Other works that target complementary classes of portability problems
+include the detection of configuration-related bugs~\cite{skoll:icse:2004,
+Yilmaz:issta:2004, Fouche:issta:2009, Kastner12, Nguyen14} and
+cross-browser incompatibilities for web
+applications~\cite{DBLP:conf/icsm/ChoudharyVO10, silakov2010improving,
+DBLP:conf/icse/Choudhary11, Mesbah:2011:ACC:1985793.1985870,
+DBLP:conf/icst/DallmeierP0MZ14}.  Static analysis tools, such as those
+mentioned earlier in this section, have also been applied to
+detection of differences between versions of external components.
+
+Such studies have helped to define the influence of an environment on
+applications and thus provide a background to our work.  Our tool applies
+these fundamental ideas to testing an application's response to anomalies.
+
+\noindent
+{\bf Testing exception handling and conformance.}
+A few researchers have developed testing techniques aimed at checking
+whether programs respond appropriately to anomalous situations.  For
+example, Fu et al. introduced data flow testing techniques that require
+tests from the points at which exceptions are thrown to the points
+at which they are handled in Java code. The purpose is to discover whether
+programs respond correctly to exceptional situations anticipated by the
+programmer~\cite{DBLP:journals/tse/FuMRW05}.  Koopman and DeVale developed
+a system to detect bugs in error handling code related to calls to POSIX
+functions~\cite{Koopman00theexception}.  Miller et al. cover the kernel as
+a source of unexpected program inputs and test applications by simulating
+them~\cite{murphyslaw}.
+Other approaches to conformance checking of POSIX operations use model
+based testing~\cite{Dadeau:2008:CSM:1433121.1433137,Farchi02}.
+
+Unlike these approaches, CrashSimulator does not exclusively target error
+handling code or anomalies that only involve individual system calls.
+Additionally, it focuses on collecting and simulating
+problematic features of specific
+deployment environments.
+That said, such testing techniques
+can help identify additional anomalies  to add to our repository.
+
+{\bf Smart Fuzzing.}
+Smart fuzzers monitor and guide executions to
+trigger code paths that are unlikely to be reached
+otherwise~\cite{smartfuzzing, taintbasedfuzzing}.
+At this point, they make a binary decision about
+whether the application correctly handled the input or not.
+Typically, a determining factor will be an actual crash by the application.
+This is similar to SEA's use of checkers to decide whether
+to accept or reject a given test
+execution, based on whether or not it observed a specific system call behavior.
+In both cases, the tools can demonstrate whether a given code path handles a
+situation correctly, but cannot prove that the code path is robust against
+other problematic inputs.  In the future, CrashSimulator could use smart
+fuzzing path exploration techniques to generate tests that reach relevant
+system calls and apply SEA at that point.
+
+%\noindent
+%{\bf Runtime verification:}
+%Runtime verification (RV)
+%techniques~\cite{DBLP:conf/rv/2010, Liu:2007:WCC:1973430.1973449, Lu_ASPLOS_2006,
+%Archer:2007:ICT:1236360.1236382, Verbowski_OSDI_2006, Tucek_SOSP_2007,
+%Park_ASPLOS_2009,DBLP:journals/jlp/LeuckerS09}
+%can detect violations of properties on specific executions
+%but do not show that the software satisfies the specification for every
+%possible input or on every possible execution.
+%Many of these techniques find general violations of
+%properties, such as atomicity~\cite{Park_ASPLOS_2009, Verbowski_OSDI_2006}.
+%Other RV techniques enable checking program-specific requirements
+%usually specified with formal languages, such as automata or logic
+%formalisms~\cite{DBLP:conf/vmcai/BarringerGHS04, DBLP:conf/kbse/GiannakopoulouH01}.
+%
+%Many RV approaches instrument code to capture relevant
+%events or application state and insert executable
+%assertions~\cite{Orso:2002:GSC:566172.566182, DBLP:conf/icse/ClauseO11,
+%DBLP:books/sp/Liblit2007, Jin:2010:ISS:1932682.1869481, Barnett01spyingon,
+%DBLP:journals/jss/BarnettS03}.
+%However, inserting pre- and post-conditions obscures the fact that the
+%specification can be treated as a parallel construct to the
+%implementation~\cite{Barnett01spyingon, DBLP:journals/jss/BarnettS03}.
+%Instead, an architecture can be used for runtime verification of .NET
+%components by running the model and the implementation side-by-side,
+%comparing results at method boundaries~\cite{Barnett01spyingon,
+%DBLP:journals/jss/BarnettS03}.
+%CheckAPI does not require application instrumentation, assuming a tracing
+%mechanism exists in the API~\cite{strace, Cappos_CCS_10}.
+
+%Like CheckAPI,
+%several other (runtime and static) checking techniques
+%allow the use of languages more familiar to
+%programmers.
+%The WiDS checker allows using a scripting language to specify properties of a
+%distributed system~\cite{Liu:2007:WCC:1973430.1973449}.
+%Contracts written in a C-like language can specify components for use
+%in TinyOS applications~\cite{Archer:2007:ICT:1236360.1236382}.
+%CheckAPI allows
+%programmers to choose the language for PSI construction or simply to
+%use an existing implementation. Lastly, work on deterministic
+%replay~\cite{Viennot13} enables record-replay techniques on multi-core
+%systems and could help improve CheckAPI-MT performance.
+
+
+\iffalse
+\noindent
+{\bf Application-specific fault detection.}
+Pip~\cite{reynolds2006pip} and Coctail~\cite{xue2012using} are distributed
+frameworks that enable developers to construct application-specific models,
+which have proven effective at finding detailed application flaws. However,
+utilizing these methods requires a knowledge of what failure needs must
+be acquired, and a specification of all relevant system properties. 
+NetCheck diagnoses application failures without application-specific
+models.  Khanna~\cite{khanna2007automated} identifies the source of
+failures using a rule base of allowed state transition paths.
+%However, it requires specialized human-generated rules for each
+%application.
+CrashSimulator leverages NetCheck's approach to simulate identified
+anomalies in network behavior, file system behavior, and other environmental-specific conditions. This enables the tool to test
+applications other than the ones with which the anomalies were originally
+discovered.
+\fi
+
+
+%% The following is old stuff -- not sure how much should be integrated
+%% into the above.
+\begin{comment}
+\subsection{Existing Techniques}
+
+Existing tools can be roughly divided into two categories, black-box
+and white-box, based on the techniques they use to perform their
+testing. Black-box tools simply manipulate the inputs of the
+application under test and observe the resultant outputs. White-box
+tools, on the other hand, perform complex analysis of the application's
+source code in order to reason about what inputs are likely to produce
+interesting outputs. Each of these methodologies have their own
+advantages and disadvantages.
+
+White-box testing tools typically rely on a similar set of techniques,
+including constraint solving of branch statements in an application's
+code and symbolic execution of an application's code in order to
+generate inputs that optimally exercise the application's code paths.
+These techniques, while powerful, are not without their downsides.
+First, both techniques are computationally-expensive. Furthermore,
+symbolic execution can not always accurately represent actual execution,
+and so there may be deviations in results. Similarly, it is difficult to efficiently
+solve a series of constraints in order to exercise a particular code.
+In many
+circumstances, a given set of
+generated inputs can exercise an intended code path  due to external dependencies that the tool cannot
+analyze. For example, a white-box testing tool cannot reliably generate
+inputs that are guaranteed to exercise a code path if they rely on the availability of an
+operating system resource.  Finally, white-box tools
+typically require that an application's source code be available, which
+is not always the case. Even advanced white-box tools that analyze machine code can be stymied in situations where an
+application's executable has been packed or encrypted.
+
+The alternative, black-box tools, have their own set of issues. They do
+not have an understanding of what an application is actually doing
+during execution, which means they are only able to submit inputs and
+observe outputs.  The upside of this technique is simplicity. Black-box
+tools do not need to understand and analyze an
+application's code, which reduces their complexity immensely. Also,
+their testing process, mutating inputs and observing outputs, is
+computationally inexpensive. The downside of this simplicity is that they
+cannot craft inputs with any sort of intelligence. This means that a
+great deal of time can be spent mutating inputs without much success in
+terms of bug identification. Also, they cannot specifically identify 
+the source of faults in an application. They can only signal that a
+fault has occurred at some point during a test run.  Furthermore, like
+white-box tools, these tools fail to take into account the environment
+in which the application is running.  \subsection{White-box Tools}
+
+White-box testing has been an area of intense interest in recent
+writing. Microsoft's SAGE and Bell Labs' DART are two examples of
+such tools that take different approaches to the same overall
+white-box technique.
+
+\subsubsection{DART}
+
+DART is a white-box testing tool that supports testing of
+applications written in the C programming language. It is
+capable of generating a test harness for an application's
+functions by through static analysis of the application's
+source code. This harness is then used for two phases of
+testing. First, it performs random testing and observes the
+application's behavior. Based on this random testing and
+symbolic execution of the application's source code, DART
+generates a series of inputs that will be used in the second
+phase of testing.  These inputs are designed to direct the
+application down specific execution paths, observing the
+programs behavior and reporting faults as they are identified.
+DART operates on the assumption that the functions being
+evaluated have no side-effects and that the application is able
+to interact appropriately with its environment.  More
+information can be found in \textbf{\emph{PAPER TITLE HERE}}
+
+\subsubsection{SAGE}
+
+SAGE differs from many other white-box testing tools in that it
+analyzes a compiled application's machine code rather than the
+application's uncompiled source code. This allows SAGE to
+operate on applications that were compiled from a variety of
+programming languages. It first runs the application under test
+with a set of well formed inputs and records an
+instruction-level trace of the application's execution. Next,
+it analyzes this trace in order to identify constraints that
+guard different paths of execution. SAGE then solves these
+constraints and, based on these solutions, generates inputs
+that are able to exercise specific paths of execution.
+
+\subsection{Black-box tools}
+
+
+\subsection{Trace Analysis Tools}
+
+Much of CrashSimulator's work on system call trace analysis is
+based on previous work on NetCheck and CheckAPI
+
+\subsubsection{NetCheck}
+
+This implementation of CrashSimulator relies of NetCheck for
+system call trace analysis. NetCheck uses two strategies to
+identify potential fault areas from system call trace. The
+first is a model based simulation of the system calls relevant
+to network communication from the input trace. System calls are
+organized according to a POSIX socket API dependency graph and
+prioritized based on the order in which the system calls should
+be made in an ideal scenario.  For example, a client
+application should not be making a \emph{connect} system call
+before it has set up its socket with the appropriate
+\emph{socket} system call.  The model assumes that all system
+calls are atomic and that they cannot happen simultaneously.
+This allows a definite global order to be created.
+
+Once a global ordering is in place each system call is
+evaluated based on the previous system calls. Return values and
+parameters passed in are taken into account. If the system call
+is feasible it is accepted and the next system call is
+evaluated. If the system call is not feasible given the current
+system call context it is rejected and logged. In addition,
+system calls that return a value indicating some sort of
+network failure are recorded. After all system calls have been
+evaluated a NetCheck attempts to diagnose the source of any
+errors encountered. It is this diagnosis that CrashSimulator
+uses when deciding where and how to mutate the ``ideal run''
+system call trace it is operating on.
+
+\subsubsection{CheckAPI}
+
+% TODO: Expand this
+\textbf{\emph{This needs to be expanded}}
+CheckAPI attempts to identify
+\end{comment}
+
+
+
+\section{PORT Related Work}
+\label{PORT Related Work}
+
+One of the ultimate goals of developing PORT
+was to make it easier for developers to
+create tools capable of detecting intrusion,
+performing fault injection,
+or conducting other program-level testing.
+To design such a language,
+we consulted
+previous work
+that processed sequences of events, such as
+system calls, RPC invocations or
+web-browser events.
+Below, we discuss some of the more significant work in these areas.
+
+\subsection{System Call Stream Processing Applications}
+
+System call based intrusion detection systems
+can be categorized into two groups: misuse and anomaly detection.
+The former search for known patterns of application specific
+system call
+sequences known as intrusion signatures~\cite{GARCIATEODORO200918}.
+In the latter, the intrusion signatures are unknown,
+but any deviation
+from ``normally observed'' system call sequences are flagged as
+malicious~\cite{DBLP:conf/sp/ForrestHSL96}.
+The two systems are typically used in tandem, and
+can vary in the way they examine the system call stream.
+
+Forrest et al.~\cite{DBLP:conf/sp/ForrestHSL96} describe
+an anomaly detection system that
+``exercises'' on various inputs to expose the
+sequence of system calls found in valid situations.
+Each witnessed pattern of contiguous system calls in the stream
+is cataloged in a database.
+The application's system call stream
+is then monitored and any detected
+deviation triggers a
+predefined security policy.
+Warrender et al. implemented a hidden Markov model-based implementation of this same system~\cite{DBLP:conf/sp/WarrenderFP99},
+while
+Sekar et al.\cite{DBLP:conf/sp/SekarBDB01} proposed
+an algorithm
+for creating a finite state automaton that can learn the valid system
+call sequences of an application.
+
+%The automaton is not limited to recognizing the small system call sequence sizes
+%proposed in~\cite{DBLP:conf/sp/ForrestHSL96}.
+%Instead, the automaton learns the entire sequence of system calls produced by
+%each run of the application.
+%To help minimize the size of the automaton, the authors incorporate program
+%counter information to recognize loops.
+%In addition, system calls made within standard libraries (such as libc) are excluded from the automaton as the authors felt that these system calls do not necessarily help capture the unique nature of system call behavior within the program.
+
+Ko et al.~\cite{DBLP:conf/acsac/KoFL94} 
+takes a different approach.
+Each system call in the
+stream is converted to a standard audit-policy record format, which is then
+matched against program policy. For example,
+the rule \lstinline+exec "/bin/(sh | csh)"+ allows a new shell to be invoked and the rule
+\lstinline+~read("/etc/passed")+ prevents the password file from being read.
+However, the audit-policy can only be applied to
+one system call at a time,
+and does not support rules to recognize specific chains of system calls.
+Another alternative is
+Systrace~\cite{DBLP:conf/uss/Provos03},
+which
+supports fine-grained process confinement
+via system call monitoring and uses an associated policy language 
+to describe the prescribed action when a rule evaluates to true.
+Phoebe~\cite{DBLP:journals/corr/abs-2006-04444}
+identifies patterns of system call failures during normal program execution
+and uses them to generate fault-injection experiments
+to test the reliability of an application when a failure occurs.
+The downside is that, after a specific sequence of system calls are seen, there is no way to create more elaborate fault-injection
+tests.
+
+Remote procedure calls can also be abused for malicious
+intent,
+so Giffin et al. ~\cite{DBLP:conf/uss/GiffinJM02} used
+push-down automata to model the possible valid
+remote call streams that an application might generate.
+The application's incoming stream 
+is then vetted against a model
+to determine whether particular calls are valid and therefore executable.
+
+Lastly, there are some domain-specific options for
+identifying problems
+in function calls.
+In~\cite{DBLP:conf/icse/ChristakisEG017}, Christakis et al. describe a language that allows developers to intercept and modify
+Windows applications’ dynamic link library function calls, which includes system
+calls. The language provides a mechanism to identify which
+function call or set of function calls, should be
+intercepted by the runtime.
+
+A commonality
+of all the systems
+outlined above
+is that they were built to solve one particular problem
+and
+therefore lack the flexibility that drove the creation of PORT.
+For example, these systems were not designed to be easily re-targeted
+to a different type of event stream or to allow for transformations.
+
+It is likely that many of the previously cited FSA-based programs can be further improved by applying recent advances in inference modeling algorithms~\cite{MarianiPS17,WalkinshawTD13,EmamM18,BeschastnikhBEK14}. Although these algorithms are not application specific, and can be tailored to recognize different types of event streams after some initial training phase, they lack the conciseness and flexibility found in PORT. PORT does not require training sets and is expressive enough to specify both frequent and  “needle in the haystack” event sequences with just a few lines of code.
+
+
+\subsection{Event Stream Processing Languages and Algorithms}
+PORT can be categorized as a stream processing language,
+which means it is a domain-specific and
+designed for expressing streaming applications.
+In this section we look at previous work related to stream processing languages.
+
+Pattern matching
+over event streams is a paradigm
+wherein a stream of continuously arriving events are examined for
+possible matches against a previously defined set of rules. Collectively, these matches form a pattern.
+Languages written for pattern matching over event
+streams are significantly richer than those used for regular expression
+matching~\cite{DBLP:conf/sigmod/AgrawalDGI08},
+and typically provide automatic
+support for naming, type checking filtering, aggregating, classifying and
+annotation of incoming events. They also  provide many benefits over traditional
+stream-based text processing languages, such as sed~\cite{Mcmahon1979sed} and
+awk~\cite{DBLP:journals/spe/AhoKW79}.
+
+Although PORT is a stream processing language, it does not
+require all of the features typically
+included in this sort of system, such as
+combining multiple stream sources,
+out of order data retrieval,
+methods for handling data loss,
+time window based event aggregation,
+or database integrations~\cite{DBLP:journals/csur/DayarathnaP18}.
+Rather PORT seems to fit within the special case
+known as complex event processing (CEP),
+in which data items in input streams are referred to as raw events, and data items in output streams
+as composite (or derived) events. A CEP system uses patterns to inspect
+sequences of raw events and then generate a composite event for each
+match~\cite{DBLP:journals/ibmrd/HirzelAGJKKMNSSW13}
+
+Queries and transforms written for CEP systems are
+frequently compiled to a low-level general purpose language (C, C++, etc.) to allow for fast
+processing of the stream. During the compilation process, automata are typically
+built to recognize the patterns specified by the queries. For instance, Agrawal et
+al.~\cite{DBLP:conf/sigmod/AgrawalDGI08} describe how patterns written in the SASE+ stream
+processing language are converted to non-deterministic finite automata. 
+
+MatchRegex~\cite{DBLP:conf/debs/Hirzel12} is a CEP engine for IBM’s Stream Processing
+Language. Predicates defined on the individual events appearing in the
+stream can be utilized in the regular expression-based pattern matching
+engine. MatchRegex supports regular expression operators, such as “Kleene star”
+and “Kleene plus” over patterns consisting of predicates (boolean expressions).
+
+The CEP systems described in this subsection are capable
+of recognizing the same stream patterns as PORT,
+but do not incorporate the
+transformation primitives 
+required by the applications
+envisioned for PORT. Although CEP systems do allow for the
+generation of composite events from raw events,
+they are meant
+to be used solely to recognize additional patterns.
+It is the combination and interplay of pattern matching and transformation
+primitives that distinguishes PORT from CEP systems.
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "paper"
+%%% End:

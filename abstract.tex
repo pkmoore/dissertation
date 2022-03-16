@@ -42,71 +42,54 @@ What is needed is a way to detect situations where an application may fail
 \textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a failure.
 
 In searching for an answer to this problem one key observation became clear:
-the causes of these environment-related failures,
-referred to as anomalies,
+the causes of these environment-related failures
 often can be seen in the
-communications between an application and its environment, such as the
+communications between an application and its environment. These communications can include the
 system calls it makes or the messages it sends across a network.
 By taking advantage of this property, we were able to design two systems that allow developers to catch environmental bugs
 before an application is deployed. 
-The first,
-which we refer to as the SEA technique,
-allows developers to record features from an environment
-that has caused one application to fail and use them to identify which other
-applications are likely to fail in a similar manner when deployed to that same environment.
-The second,
+The first system, known as CrashSimulator,
+uses a novel technique we have named Simulating Environmental Anomalies (SEA).
+This technique allows developers to record features from one environment
+after an application has failed and use them to identify if other
+applications are likely to fail in a similar manner.
+The second system,
 known as PORT,
-is a domain specific language that allows developers
-to quickly write expressive programs that can analyze a stream made up of
-an application’s communications with its environment.
+is a domain specific programming language that allows developers
+to quickly write expressive programs that can analyze a stream of communications between an application and  its environment.
 PORT programs can both detect opportunities to
-simulate a failure-causing feature \textit{and} modify the stream so that
-the feature is present.
+simulate a failure-causing feature, known as an anomaly, \textit{and} modify the stream so that anomaly is present.
 
 To realize the SEA technique we implemented a tool called CrashSimulator.
-It allows developers to capture environmental anomalies visible in the
-system calls an application makes and use them to test applications to see
-if they would fail were they to experience them in reality.
-We were able to use CrashSimulator to find many high impact bugs in
-popular,
+We were able to use it to find many high impact bugs in popular,
 battle tested applications.
-
-Next, we conducted a user study with CrashSimulator in order to determine
-how well developers with varying skill levels could use it.
-This study found that,
+Based on the results of a user study we also found that,
 while these developers could use the tool successfully,
 capturing new anomalies was difficult.
-As a result of this finding we create PORT,
-a domain specific language
-specifically tailored toward recognizing patterns and making modifications
-to streams of application activity.
-Our goal was to ease the process of
-writing checkers and mutators so that SEA could easily and widely used.
-
+As a result of this finding we created PORT
+in order to ease the process of writing checkers and mutators.
 To see how well PORT achieved its intended purpose it to recreate and
 replace the checkers and mutators used in our original SEA work.
 These new PORT programs were shorter, easier to read, and easier to
 maintain than the lengthy and complex Python scripts they replaced.
 We also took advantage of PORT's extensibility by expanding SEA to USB
 traffic.
-This allowed us to write programs that could identify patterns in and
+We were also able to write programs that could identify patterns in and
 modify streams of USB traffic.
 Using this capability we were able to write programs that could
 detect BADUSB style attacks in recorded streams and modify innocent streams
-so that they containd simulated attacks.
+so that they contained simulated attacks.
 The former could be used alongside a USB capture program to detect attacks
 on real systems while the latter could be used to test existing defenses.
 
 %Paragraph 4
 Our hope is that these tools and techniques will see wide
-adoption and use in improving application reliability and security.
-We see production-ready versions of these tools being used in continuous
-integration and deployment pipelines in order to allow current and future
+adoption and use in improving application reliability and security. We envision this could occur in two different ways. The first would be wide-spread adoption of these
+tools in continuous
+integration and deployment pipelines. This could enable current and future
 applications to be tested against an ever-increasing repository of
 environmental bugs.
-We also see a world where developers can exchange PORT programs so as a
-means of distributing knowledge about what situations have caused failures
-so that applications that have never had to experience a situation can
-be protected against them.
+The second would be the development of a user community in which developers can exchange PORT programs and their experiences to increase knowledge about what situations have caused failures.  Collectively, 
+this could enable the introduction of new applications without the catastrophic consequences of a deployment failure. 
 
 \vspace*{3ex plus 1fil}
