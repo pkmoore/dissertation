@@ -57,24 +57,34 @@ being rendered unbootable~\cite{kb4056892}.
 
 What is needed is a methodical way to record, preserve, and test against
 specific features of any environment proven to have caused incorrect
-behavior in applications. We achieve this by cataloging these
-features, which we call \textit{anomalies}, and
-offering a systematic and reproducible strategy for
-future application tests, without
-requiring per application effort.
-
-In this thesis we document our efforts to achieve this capability using two
-novel techniques....
-
-The first technique is SEA which lets you capture stuff...
-We used this to write CrashSimulator
-
-The second is PORT that yadda yadda yadda...
+behavior in applications.
+What is needed is a way to cataloge these features,
+known as ``anomalies,''
+so that they may be used to systematically and reproducabily test applications.
+In this thesis we discuss the tools and techniques we created in order to achieve this end.
 
 \section{The SEA Technique and Crash Simulator}
+The first major component of this work is a novel technique we refer to as Simulating Environmental Anomalies (SEA).
+This technique is based on our finding that problematic features of an environment can often be identified in the results and side effects of the function calls, system calls, or other environmental interactions an application makes.
+Once defined,
+we created a proof-of-concept implementation of SEA called CrashSimulator which applies the technique on the system calls made by Linux applications.
+The tool allows users to define ``checkers'',
+which passively identify problems in recorded system call streams,
+and ``mutators'' which modify a system call recording so that it contains an anomaly.
+CrashSimulator can then replay this modified stream in order to see whether or not
+an application responds to the anomaly.
+Using CrashSimulator's checkers and mutators we were able to find high-impact bugs in widely deployed applications.
 
 \section{Pattern Observation Recognition and Transformation}
-
+The second component is a new domain specific language that is specifically tailored toward making the expression of anomalies easier for developers.
+The language,
+known as PORT,
+came about as a result of findings from a CrashSimulator user study that showed users were having difficulty writing checkers and mutators using a general purpose programming language.
+It is inspired by stream and event processing languages and offers a simple,
+but powerful syntax for describing both opportunities to simulate an anomaly and what modifications must be made to a stream in order to do so.
+Further, PORT is able to extend the SEA technique to other domains by support for a variety of other ``activity representations'' such as XMLRPC requests, and USB traffic.
+PORT allowed us to rewrite many of our existing CrashSimulator checkers and mutators in a simpler and more maintainable fashion.
+Further, we were able to write programs that can detect and simulate USB-based attacks and hardware bugs.
 
 \section{Organization of the thesis}
 \label{sec:organization}
@@ -92,7 +102,7 @@ discusses PORT,
 our new domain specific language that addresses these weaknesses by to make
 it easy to find and modify interesting portions of streams of
 application activity.
-Chapter~\ref{chap:relatedword}
+Chapter~\ref{chap:relatedwork}
 compares our tools and techniques to related work.
 Finally,
 Chapter~\ref{chap:conclusion} offers our closing thoughts and hopes for
