@@ -3,19 +3,16 @@
 \label{chap:intro}
 \textit{No Battle Plan Survives Contact With the Enemy --- Helmuth von Moltke}
 
-Given the way everything is scaling up we are expecting software to run in
-a ever-growing set of increasingly diverse environments.
-
-No matter how well an application is tested before its release,
+In order to meet the needs of an ever-growing user base,
+software is expected to run in an increasing variety of deployment \emph{environments}. Generally, it is difficult to know everything that applications might come up against when deployed in such environments. As a consequence, it is perhaps not surprising that, no matter how well an application is tested before its release,
 new bugs always seem to emerge after deployment.
 Oracle estimates that 40\% of deployed applications
 contain critical defects -- a situation that is compounded
 by the fact that deployment
 increases the cost to fix these flaws by 100 fold~\cite{OracleAppQuality}.
+
 One reason for this outcome
-is that these applications will operate within a diverse set of
-deployment \emph{environments},
-and variations between these environments tend to
+is that differences between environments tend to
 reveal previously undiscovered flaws.
 These flaws emerge from
 such factors as
@@ -58,18 +55,22 @@ being rendered unbootable~\cite{kb4056892}.
 What is needed is a methodical way to record, preserve, and test against
 specific features of any environment proven to have caused incorrect
 behavior in applications.
-What is needed is a way to cataloge these features,
-known as ``anomalies,''
-so that they may be used to systematically and reproducabily test applications.
-In this thesis we discuss the tools and techniques we created in order to achieve this end.
+By cataloging these features,
+which we refer to as ``anomalies,'' and using them to systematically and reproducibly test other applications, we can predict behavior before deployment, saving time, developer effort, money, and most importantly the developer's reputation. 
+In this thesis we discuss the tools and techniques (illustrated in Figure~\ref{fig:overview}) we created in order to achieve this end.
 
-\section{The SEA Technique and Crash Simulator}
+\section{The SEA Technique and CrashSimulator}
 The first major component of this work is a novel technique we refer to as Simulating Environmental Anomalies (SEA).
-This technique is based on our finding that problematic features of an environment can often be identified in the results and side effects of the function calls, system calls, or other environmental interactions an application makes.
+This technique is based on our finding that problematic features of an environment can often be identified in the results and side effects of the function calls, system calls, or other environmental interactions an application makes. When employing SEA,
+an application under test is exposed
+to the anomalies unique to a given environment
+in such a way that its responses will indicate
+potential for failures upon deployment. In this way, developers are given
+an easy and inexpensive way to learn from the mistakes of others.
 Once defined,
 we created a proof-of-concept implementation of SEA called CrashSimulator which applies the technique on the system calls made by Linux applications.
-The tool allows users to define ``checkers'',
-which passively identify problems in recorded system call streams,
+The tool allows users to define ``checkers''
+to passively identify problems in recorded system call streams,
 and ``mutators'' which modify a system call recording so that it contains an anomaly.
 CrashSimulator can then replay this modified stream in order to see whether or not
 an application responds to the anomaly.
@@ -79,31 +80,39 @@ Using CrashSimulator's checkers and mutators we were able to find high-impact bu
 The second component is a new domain specific language that is specifically tailored toward making the expression of anomalies easier for developers.
 The language,
 known as PORT,
-came about as a result of findings from a CrashSimulator user study that showed users were having difficulty writing checkers and mutators using a general purpose programming language.
-It is inspired by stream and event processing languages and offers a simple,
+came about as a result of findings from a CrashSimulator user study that a general purpose programming language was insufficient for writing checkers and mutators. 
+The language is inspired by stream and event processing languages and offers a simple,
 but powerful syntax for describing both opportunities to simulate an anomaly and what modifications must be made to a stream in order to do so.
-Further, PORT is able to extend the SEA technique to other domains by support for a variety of other ``activity representations'' such as XMLRPC requests, and USB traffic.
+
+One of our goals for PORT was to be able to extend the use of the SEA technique to other domains. To do so, we needed to show it could provide support for a variety of other ``activity representations'' such as XMLRPC requests, and USB traffic.
 PORT allowed us to rewrite many of our existing CrashSimulator checkers and mutators in a simpler and more maintainable fashion.
-Further, we were able to write programs that can detect and simulate USB-based attacks and hardware bugs.
+Further, we demonstrated that we could write programs that can detect and simulate USB-based attacks and hardware bugs.
+
+
+\begin{figure}[H]
+  \center{}
+  \fbox{\includegraphics[scale=1.2]{chapter1/images/seaoverview}}
+    \setlength{\belowcaptionskip}{-16pt}
+  \caption[Overview of Components]{This work discusses several tools and techniques that work together to help their users find environmental bugs.  This diagram offers an informal view of how they fit together.  Please refer to the chapters listed alongside the primary components for more detailed discussion about their operation.}
+  \label{fig:overview}
+\end{figure}
 
 \section{Organization of the thesis}
 \label{sec:organization}
 Chapter~\ref{chap:background}
-presents an overview of environmental bugs including where they
+presents an overview of environmental bugs, including where they
 appear and how they can be detected.
-Chapter~\ref{chap:sea}
-discusses CrashSimulator -- our implementation of the SEA
-technique over system calls.
-Chapter~\ref{chap:userstudy}
-covers a user study conducted with CrashSimulator that
+The next chapter (Chapter~\ref{chap:sea})focuses on the development and testing of the SEA technique and the implementation and testing of CrashSimulator over system calls.
+This is followed by the rationale for the second half of our work in  Chapter~\ref{chap:userstudy}. It presents results
+from a user study conducted with CrashSimulator that
 verified some of the tool's strengths and pointed out some weaknesses.
 Chapter~\ref{chap:port}
-discusses PORT,
-our new domain specific language that addresses these weaknesses by to make
-it easy to find and modify interesting portions of streams of
+is a direct response to usability issues raised in the previous chapter. It  discusses PORT,
+our new domain specific language that addresses these weaknesses by making
+it easier to find and modify interesting portions of streams of
 application activity.
 Chapter~\ref{chap:relatedwork}
-compares our tools and techniques to related work.
+compares our tools and techniques to earlier work in the areas of event stream processing languages, system call stream processing applications, API protocol mining, static analysis and more.
 Finally,
 Chapter~\ref{chap:conclusion} offers our closing thoughts and hopes for
 the future of this work.

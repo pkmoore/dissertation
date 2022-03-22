@@ -4,7 +4,7 @@
 
 {\large\bf
    AN ABSTRACT\\[3ex]
-   A PORT in Stormy SEAs: Using Past Problems to Prevent Future Failures\\[2ex]
+   A PORT in Stormy SEAs: Leveraging Past Problems to Prevent Future Failures\\[2ex]
    by\\[3ex]
    Preston K.\ Moore\\[3ex]
    %% Advisor name
@@ -27,17 +27,19 @@ May 2022
 %%software updates, are becoming increasingly important in a wide variety of
 %%settings,
 
-In order to be able to scale with demand software must be deployed and executed on
-many diverse platforms.
-Unfortunately, if not handled appropriately, 
-the differences between these platforms,
-can cause even well-tested applications to fail upon deployment.
-Anticipating and handling all the different combinations of
+In order to meet the needs of an ever-growing user base,
+software must be deployed and executed into an
+increasing set of new and unusual environments.
+Unfortunately, if not handled appropriately, any
+variations between these platforms
+could cause even well-tested applications to fail upon deployment.
+Anticipating and being prepared to handle all the potential combinations of
 software and hardware that can affect an application’s ability to operate
-in a given deployment environment is almost impossible.
+in a given deployment environment is an almost impossible task.
 To make matters worse,
-recovering from these post-deployment failures is expensive and
-detrimental to user experience.
+recovering from these post-deployment failures is expensive,
+harmful to user experience,
+and damaging to developer reputations.
 What is needed is a way to detect situations where an application may fail
 \textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a failure.
 
@@ -46,41 +48,50 @@ the causes of these environment-related failures
 often can be seen in the
 communications between an application and its environment. These communications can include the
 system calls it makes or the messages it sends across a network.
-By taking advantage of this property, we were able to design two systems that allow developers to catch environmental bugs
+By taking advantage of this concept,
+we were able to develop two techniques that allow developers to catch environmental bugs
 before an application is deployed. 
-The first system, known as CrashSimulator,
-uses a novel technique we have named Simulating Environmental Anomalies (SEA).
-This technique allows developers to record features from one environment
+The first technique,
+known as Simulating Environmental anomalies (SEA),
+allows developers to record features from one environment
 after an application has failed and use them to identify if other
 applications are likely to fail in a similar manner.
-The second system,
-known as PORT,
-is a domain specific programming language that allows developers
+The second technique involved 
+applying event processing strategies
+to application recordings
+using a new  domain specific programming language,
+in order to allow developers to
 to quickly write expressive programs that can analyze a stream of communications between an application and  its environment.
-PORT programs can both detect opportunities to
-simulate a failure-causing feature, known as an anomaly, \textit{and} modify the stream so that anomaly is present.
 
 To realize the SEA technique we implemented a tool called CrashSimulator.
 We were able to use it to find many high impact bugs in popular,
 battle tested applications.
-Based on the results of a user study we also found that,
-while these developers could use the tool successfully,
-capturing new anomalies was difficult.
-As a result of this finding we created PORT
-in order to ease the process of writing checkers and mutators.
-To see how well PORT achieved its intended purpose it to recreate and
-replace the checkers and mutators used in our original SEA work.
+Based on the results of a user study we found that,
+while developers could use the tool successfully,
+capturing a problematic feature, known as an anomaly, was difficult.
+As a direct result of this observation we knew that a domain specific language would be required to make SEA usable in practical applications.
+ To this end, we created PORT
+which uses the aforementioned event processing techniques
+to ease the development of recording and simulating an anomaly.
+PORT programs can both detect opportunities to
+simulate an anomaly, \textit{and} modify the stream so that anomaly is present.
+To see how well PORT achieved its intended purpose, we used it to recreate and
+replace the anomalies used in our original SEA work.
 These new PORT programs were shorter, easier to read, and easier to
 maintain than the lengthy and complex Python scripts they replaced.
 We also took advantage of PORT's extensibility by expanding SEA to USB
 traffic.
 We were also able to write programs that could identify patterns in and
-modify streams of USB traffic.
-Using this capability we were able to write programs that could
-detect BADUSB style attacks in recorded streams and modify innocent streams
-so that they contained simulated attacks.
-The former could be used alongside a USB capture program to detect attacks
-on real systems while the latter could be used to test existing defenses.
+modify recordings of USB communications.
+Using this capability we were able to simulate
+BADUSB style attacks in recorded streams by modifying innocent streams
+so that they contained the harmful features of such an attack.
+We were also able to simulate device identifier conflicts -- a situation that has
+plagued operating system developers in the past.
+We do so using a PORT program that modifies a recording so that these conflicts
+are present in device registration frames.
+In both cases, these recordings could be used
+to test how a system might respond should they occur in the real world.
 
 %Paragraph 4
 Our hope is that these tools and techniques will see wide
