@@ -23,7 +23,7 @@ of the decisions that went into their design and operation.
   \label{fig:architecture}
 \end{figure}
 
-\noindent\textbf{The PORT Compiler}
+\paragraph{The PORT Compiler}
 The compiler is responsible for constructing a transducer
 from a PORT program.
 %PORT is a compiled rather than an interpreted language because
@@ -38,7 +38,7 @@ In the second, the
 contents of the AST are used to construct the transducer, which is then serialized to
 disk so that it may be stored and reused.
 
-\noindent\textbf{The Internal Data Format}
+\paragraph{The Internal Data Format}
  We wanted to make PORT flexible so the SEA technique
 could
 work with many types of
@@ -68,7 +68,7 @@ event record.  Event records comprise the input stream of the transducer, while
 the output event stream is converted back by the same transformer module
 into the original  representation. We have implemented transformers for different kinds of activity streams including system call, USB, and RPC call sequences.
 
-\noindent\textbf{Executing a PORT Program}
+\paragraph{Executing a PORT Program}
 The ``Executor'' module implements the PORT run-time environment.
 % Unlike an executable program, a compiled PORT program is a static entity
 % that cannot run by itself.  Instead, a component we refer to as the
@@ -79,8 +79,6 @@ converting the selected input stream to IDF, and
 running the transducer. It also
 uses the appropriate transformer to translate the output stream back to the original activity representation, and reports whether the input sequence was
 accepted or rejected by the transducer.
-
-\vspace{-.5cm}
 
 %%% Local Variables:
 %%% mode: latex

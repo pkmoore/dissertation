@@ -188,7 +188,7 @@ t \in \mathsf{texp} ::= {} & \mathtt{String} \mid \mathtt{Number} \\
 \label{lst:SyntaxGrammar}
 \end{figure}
 
-\noindent\textbf{Preamble} An abstract event consists of a name and a record of named fields that hold data values of interest. Consider the event definition:
+\paragraph{Preamble} An abstract event consists of a name and a record of named fields that hold data values of interest. Consider the event definition:
 \begin{lstlisting}[numbers=none,xleftmargin=0em,gobble=2]
   event rd {read fdesc: Number@0}
          | {recv fdesc: Number@0};
@@ -230,7 +230,7 @@ The abstraction mechanism used for these parameter lists can also be applied to 
 
 
 
-\noindent\textbf{Body} The action expression in the body of a PORT program describes how the input event stream is transformed to the output event stream. An individual input event is matched and transformed by an atomic action of the form
+\paragraph{Body} The action expression in the body of a PORT program describes how the input event stream is transformed to the output event stream. An individual input event is matched and transformed by an atomic action of the form
 \[\mathit{id}_1(p) \;\mathtt{with}\; b \texttt{ -> } \mathit{id}_2\,(e)\]
 This action matches the next (abstract) input event against the \emph{pattern} $\mathit{id}_1(p)$ subject to the constraint $b$. The action is triggered if the name of the matched event is $\mathit{id}_1$ and its record satisfies the constraints imposed by $p$ and $b$. The semantics of pattern matching is similar to the way expressions are pattern matched in functional programming languages. In particular, a variable occurring in a pattern refers to a register of the transducer. If the pattern matches the event, then the register is assigned to the corresponding value. For example, consider the pattern:
 \begin{lstlisting}[numbers=none,xleftmargin=0em,gobble=2]
@@ -273,14 +273,14 @@ Using this syntactic short-hand, the action given above can be expressed more co
 \end{lstlisting}
 
 
-\noindent\textbf{Sequencing, Implicit Repetition, and Negation}
+\paragraph{Sequencing, Implicit Repetition, and Negation}
 %In our design of PORT we have decided against the inclusion of the repetition and choice constructs supported by general-purpose stream processing languages. This design decision greatly simplifies the transducer construction as we do not have to deal with elimination of epsilon transitions expressing nondeterministic choice.
 Atomic actions can be sequenced to form compound action expressions that match and transform sequences of events, $\mathit{action}_1 \texttt{;} \mathit{action}_2$. PORT simplifies the handling of unbounded event sequences by using implicit repetition semantics.
 If the next event in the input stream is not matched by the current atomic action in the action sequence, the event is simply copied to the output stream. The transducer moves on by attempting to match the next input event against the current atomic action.
 
 Sometimes, it is necessary to constrain this implicit repetition by disallowing the appearance of certain events in the input stream before an event  matched by the current atomic action is encountered.  This can be done by \emph{negated patterns}, which take the form \lstinline+not id$(p)$ with $b$+. If an event that matches the pattern \lstinline+id$(p)$ with $b$+ is encountered before the next atomic action in the program takes effect, then the transducer aborts. For instance, the PORT program in Fig.~\ref{fig:CompareListing} uses a negated pattern to ensure that no \lstinline+read+ system call is executed on the opened file with file descriptor \lstinline+fd+ before the file is closed.
 
-\noindent\textbf{Explicit Repetition}
+\paragraph{Explicit Repetition}
 PORT also supports explicit repetition of actions, which is indicated using a Kleene star, $\mathit{action}\texttt{*}$, similar to standard regular expression syntax.
 % matching clearly defined sequences of events.  This functionality is useful when a desired pattern
 % contains some unknown number of repetitions of one or more events.
@@ -289,7 +289,6 @@ The generated transducer accepts zero or more repetitions of the specified seque
 Output is only produced if a complete repetition of sequence is encountered.
 All previously discussed functionality and behavior holds true for the sequence being repeated.
 
-\vspace{-.5cm}
 
 %\iffalse
 %This production triggers the creation of a mutator with only a starting

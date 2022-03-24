@@ -24,7 +24,7 @@ any deviations
 from ``normally observed'' system call sequences are
 malicious~\cite{DBLP:conf/sp/ForrestHSL96}.
 
-Forrest et al.~\cite{DBLP:conf/sp/ForrestHSL96} proposed 
+Forrest et al.~\cite{DBLP:conf/sp/ForrestHSL96} proposed
 an anomaly detection system that cataloga  witnessed patterns  within a database.
 An application's system call stream
 is monitored and any
@@ -39,16 +39,16 @@ predefined security policy.
 %counter information to recognize loops.
 %In addition, system calls made within standard libraries (such as libc) are excluded from the automaton as the authors felt that these system calls do not necessarily help capture the unique nature of system call behavior within the program.
 
-Ko et al.~\cite{DBLP:conf/acsac/KoFL94} 
+Ko et al.~\cite{DBLP:conf/acsac/KoFL94}
 proposes converting each system call in a
-stream to a standard audit-policy record format that can be 
-matched against program policy. 
+stream to a standard audit-policy record format that can be
+matched against program policy.
 However, the audit-policy can only be applied to
 one system call at a time,
 and does not support rules to recognize specific chains of system calls.
 Another alternative is
 Systrace~\cite{DBLP:conf/uss/Provos03},
-which uses an associated policy language 
+which uses an associated policy language
 to describe any action prescribed when a rule evaluates to true.
 Phoebe~\cite{DBLP:journals/corr/abs-2006-04444}
 identifies patterns of system call failures during normal program execution
@@ -61,7 +61,7 @@ intent,
 so Giffin et al. ~\cite{DBLP:conf/uss/GiffinJM02} used
 push-down automata to model the possible valid
 remote call streams that an application might generate.
-The application's incoming stream 
+The application's incoming stream
 is then vetted
 to determine whether particular calls are valid and therefore executable.
 
@@ -106,7 +106,7 @@ Though PORT is a stream processing language, it does not
 require all of the features typically
 included in this sort of system~\cite{DBLP:journals/csur/DayarathnaP18}.
 Rather PORT seems to fit within the special case
-known as complex event processing (CEP) 
+known as complex event processing (CEP)
 Data items in input streams of these systems are referred to as raw events, while items in output streams are called
 composite (or derived) events. A CEP system uses patterns to inspect
 sequences of raw events and generate a composite event for each
@@ -129,14 +129,13 @@ David et al. cover methods for dynamically modifying the underlying CEP query re
 Though these CEP systems are capable
 of recognizing the same stream patterns as PORT, they
 do not incorporate the
-transformation primitives 
+transformation primitives
 required by the applications
 envisioned for PORT. CEP systems are meant
 to be used solely to recognize additional patterns.
 It is the combination and interplay of pattern matching and transformation
 primitives that distinguishes PORT from CEP systems.
 
-\vspace{-.5cm}
 
 %%% Local Variables:
 %%% mode: latex

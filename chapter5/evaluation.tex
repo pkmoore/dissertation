@@ -77,7 +77,7 @@ fstat({fildesc: ?fd});
 \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
 event Statbuf {mode: String@2};
 event anystat {stat sb: Statbuf@1}
-        | {lstat sb: Statbuf@1} 
+        | {lstat sb: Statbuf@1}
         | {fstat sb: Statbuf@1};
 anystat({sb: {mode: -> "st_mode=S_IFBLK"}});
 \end{lstlisting}
@@ -99,7 +99,7 @@ to using
 PORT:
 
 \textit{Minimal boilerplate code:} Because PORT's capabilities are narrowly defined, it lacks the boilerplate
-code associated with general purpose languages. No code is needed for 
+code associated with general purpose languages. No code is needed for
 reading an input trace, managing mutator state, and producing output.
 As a result,
 functions can be generically implemented within PORT's core, eliminating
@@ -132,7 +132,7 @@ operation themselves.
 Moore et al. identified the steps required to
 correctly perform such a move by examining the source code of the ``mv''
 command. The team then implemented a set of checkers to identify situations where an application does not carry out one
-of these steps correctly. 
+of these steps correctly.
 In real world applications,
 these checkers were able to identify bugs
 in many popular applications and libraries that offer file movement
@@ -183,7 +183,7 @@ usbhid({src: ?src, dst: ?dst, data: ?num1}) -> usbhid({data: ->num2});
 \end{figure}
 
 
-A key feature of PORT is the ease with which support for new activity representations 
+A key feature of PORT is the ease with which support for new activity representations
 can be added. To demonstrate this
 we implemented support for streams of USB activity. This format was chosen because of its ubiquity and its reliance on numerous parties correctly implementing a standard protocol.
 Using PORT on streams of USB activity required implementing an appropriate transformer and developing some way to capture communications between USB devices.
@@ -194,7 +194,7 @@ Together, these two components allowed us to write PORT programs that could both
 \textbf{BADUSB} As one test scenario, we settled upon the recent type of USB-based attack known as BADUSB~\cite{badusb}.
 These attacks utilize small USB devices that resemble thumb drives. However, rather than storing files, when plugged into a targeted computer, these devices register themselves as human interface devices. They can then rapidly send keystrokes to execute malicious commands before a human is able to react.
 Our goal was to construct PORT programs to recognize these attacks within a recording of a machine’s USB traffic, and simulate them by transforming an innocent USB recording into one containing such an attack.
-The latter could be replayed using a device similar to those used in actual attacks in order to assess whether or not a computer’s defensive measures (e.g. antivirus software or specialized anti-BADUSB programs) are able detect the attacks. 
+The latter could be replayed using a device similar to those used in actual attacks in order to assess whether or not a computer’s defensive measures (e.g. antivirus software or specialized anti-BADUSB programs) are able detect the attacks.
 
 The first PORT program we wrote detects a USB device attempting to execute
 powershell in a mode where its security policy is bypassed.
@@ -242,11 +242,11 @@ to identify specific
 patterns within real-world system call traces.
 To get a realistic set of test traces
 we chose
-eight widely used network applications 
-and four popular compression utilities that 
-offered a sufficient level of complexity. 
+eight widely used network applications
+and four popular compression utilities that
+offered a sufficient level of complexity.
 
-We recorded test traces using the following 
+We recorded test traces using the following
 experimental setup. Five of the applications are clients that operate by connecting to an appropriate service. They were recorded as they made this connection and completed a small request (e.g. transmitting or receiving a file).
 Three of the applications were servers, and were recorded as they accepted a connection from an appropriate client and serviced a small request.
 The compression utilities were recorded as they compressed a file or decompressed an archive.
@@ -321,4 +321,3 @@ There may be programs that would diverge from the performance trend we report ab
 %%% mode: latex
 %%% TeX-master: "paper"
 %%% End:
-

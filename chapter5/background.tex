@@ -16,7 +16,7 @@ The researchers found that,
 once captured,
 these anomalies
 could be
-used to simulate and 
+used to simulate and
 test
 an application as if
 it had been encountered
@@ -33,7 +33,7 @@ discussed in the SEA paper's evaluation.
 This anomaly may be problematic
 when an application running under Linux
 attempts to open and read data from a file on disk.
-Linux supports several special file types  that require special procedures to 
+Linux supports several special file types  that require special procedures to
 write to and
 read from.
 The SEA technique
@@ -53,16 +53,16 @@ In this paper, we
 show that the best way to extract this data
 is to treat application activity
 as a sequence of events. This enables us to use
-proven event processing techniques. 
+proven event processing techniques.
 Yet, it became apparent that existing
 stream processing tools
 are not well suited to this task. To apply
 SEA's success to other activity types,
 such as calls to library functions
-and remote procedure calls, we needed to develop a novel tool that would be  agnostic to the way an application's activity has been recorded. As such, it required its own  distinct language. 
+and remote procedure calls, we needed to develop a novel tool that would be  agnostic to the way an application's activity has been recorded. As such, it required its own  distinct language.
 
 
-%%% What are we really doing here.  WHY did we decided to make this language?
+%%% What are we really doing here.  WHY did we decided to make this language
 %%% That's really the question that needs to be answered.  I think that instead
 %%% of making things up that we had the language and decided to apply it here
 %%% we need to talk about how seeing the success of this work motivated us to
@@ -107,7 +107,7 @@ and remote procedure calls, we needed to develop a novel tool that would be  agn
 %last year alone!
 %
 \begin{figure}
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize,gobble=4]
+  \begin{lstlisting}[basicstyle=\ttfamily,gobble=4]
     # Before Modification
     open("example.txt", O_RDWR, 0) = 3
     fstat(3, {...}) = 0
@@ -115,7 +115,7 @@ and remote procedure calls, we needed to develop a novel tool that would be  agn
     write(3, "Hello World!\n", 13) = 13
     close(3) = 0
   \end{lstlisting}
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize,gobble=4]
+  \begin{lstlisting}[basicstyle=\ttfamily,gobble=4]
     # After Modification
     open("example.txt", O_RDWR, 0) = 3
     fstat(3, {...}) = 0
@@ -132,7 +132,7 @@ and remote procedure calls, we needed to develop a novel tool that would be  agn
 
 
 %The decision to create a new domain specific language was not one we
-%undertook lightly. 
+%undertook lightly.
 %as such an effort takes
 %a significant amount of work
 %to define,
@@ -144,7 +144,7 @@ such as a deterministic finite automaton (i.e. a DFA or a FSA) enhanced to opera
 structures, would appear to be sufficient.
 Unfortunately, as shown in Figure~\ref{fig:StraceListing}, the simple model will not work.  The {\tt open()} call produces a file descriptor that a subsequent {\tt
 read()} call may match.
-Yet, a standard DFA or FSA cannot match patterns with this sort of dependency. 
+Yet, a standard DFA or FSA cannot match patterns with this sort of dependency.
 Instead, we need a language
 that can easily capture
 the internal contents of events,
@@ -190,7 +190,7 @@ timedelta(minutes=10))
 
 
 
-One possibility is to deploy more expressive automata models, such as register automata~\cite{DBLP:journals/tcs/KaminskiF94} or session automata~\cite{DBLP:journals/corr/BolligHLM14}.  As the 
+One possibility is to deploy more expressive automata models, such as register automata~\cite{DBLP:journals/tcs/KaminskiF94} or session automata~\cite{DBLP:journals/corr/BolligHLM14}.  As the
 SEA researchers found,  the ability to
 {\textit modify} activity can create scenarios to ensure
 application failures rather than  waiting for them to occur.
@@ -240,7 +240,7 @@ program must be fluent in this host language.
 %that would likely not be useful for our application domain, such as time-based event windows,
 %merging multiple event streams,
 %and the calculation of
-%summary statistics over specified fields. 
+%summary statistics over specified fields.
 
 
 To demonstrate these points concretely,
@@ -264,7 +264,7 @@ That is, the program in Figure~\ref{fig:CompareListing} could be
 re-purposed to not only find the appropriate pattern but also modify the
 results of the {\tt close} call to simulate a failure.
 This would be achieved
-by adding the following output clause to line 8 of the program 
+by adding the following output clause to line 8 of the program
 as follows:
 \begin{lstlisting}[numbers=none,xleftmargin=0em,gobble=2]
   close({filedesc: ?fd}) -> close({retval: -1});
