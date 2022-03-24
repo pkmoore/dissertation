@@ -56,7 +56,7 @@ What is needed is a methodical way to record, preserve, and test against
 specific features of any environment proven to have caused incorrect
 behavior in applications.
 By cataloging these features,
-which we refer to as ``anomalies,'' and using them to systematically and reproducibly test other applications, we can predict behavior before deployment, saving time, developer effort, money, and most importantly the developer's reputation. 
+which we refer to as ``anomalies,'' and using them to systematically and reproducibly test other applications, we can predict behavior before deployment, saving time, developer effort, money, and most importantly the developer's reputation.
 In this thesis we discuss the tools and techniques (illustrated in Figure~\ref{fig:overview}) we created in order to achieve this end.
 
 \section{The SEA Technique and CrashSimulator}
@@ -80,7 +80,7 @@ Using CrashSimulator's checkers and mutators we were able to find high-impact bu
 The second component is a new domain specific language that is specifically tailored toward making the expression of anomalies easier for developers.
 The language,
 known as PORT,
-came about as a result of findings from a CrashSimulator user study that a general purpose programming language was insufficient for writing checkers and mutators. 
+came about as a result of findings from a CrashSimulator user study that a general purpose programming language was insufficient for writing checkers and mutators.
 The language is inspired by stream and event processing languages and offers a simple,
 but powerful syntax for describing both opportunities to simulate an anomaly and what modifications must be made to a stream in order to do so.
 
@@ -92,7 +92,6 @@ Further, we demonstrated that we could write programs that can detect and simula
 \begin{figure}[H]
   \center{}
   \fbox{\includegraphics[scale=1.2]{chapter1/images/seaoverview}}
-    \setlength{\belowcaptionskip}{-16pt}
   \caption[Overview of Components]{This work discusses several tools and techniques that work together to help their users find environmental bugs.  This diagram offers an informal view of how they fit together.  Please refer to the chapters listed alongside the primary components for more detailed discussion about their operation.}
   \label{fig:overview}
 \end{figure}

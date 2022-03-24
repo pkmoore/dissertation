@@ -18,15 +18,15 @@ Each event consists of a unique identifier (e.g. the name of the function being 
 
 Parameter values are drawn from a set of basic data values, such as strings and numbers, as well as user-definable record types. PORT also gives users the option to ignore parameter values that are irrelevant for the particular task at hand. And, it can create a single abstract event from several semantically related, but different event identifiers. In this manner, the transducer description can refer to just the abstract events rather than individually specifying each event it contains.
 
-A PORT transducer processes an input event stream as follows.
-%(illustrated in Figure~\ref{fig:Processing}).
+A PORT transducer processes an input event stream as
+illustrated in Figure~\ref{fig:processing}.
 Each item in an input
 sequence is examined and the transducer's internal state is updated accordingly.
  Output is then produced based on the rules described in the transducer's program.
- In this way, 
+ In this way,
  the transducer itself can be thought of as a sequence of \emph{actions}
- that may or may not be executed based on the values in the input stream. 
- The state of the transducer keeps track of the next action to be executed, as well as a valuation of a 
+ that may or may not be executed based on the values in the input stream.
+ The state of the transducer keeps track of the next action to be executed, as well as a valuation of a
  finite number of \emph{registers} that hold data values.
  Whether or not an action is executed depends on a combination of the transducer state
  and the values of the current event.
@@ -34,14 +34,14 @@ sequence is examined and the transducer's internal state is updated accordingly.
 event from the input stream, which may update some of the registers, and then writing the next event in the output stream.
 %The parameter values in the output event may be computed from the (updated) registers.
 
-%\begin{figure}[t]
-%  \centering
-%  \includegraphics[scale=.6]{images/processing}
-%  \caption{A transducer individually processes each item in an input
-%  sequence, updating its internal state and producing output according
-%  to the rules described in its program.}
-%  \label{fig:Processing}
-%\end{figure}
+\begin{figure}[t]
+  \centering
+  \includegraphics[scale=1]{chapter5/images/processing}
+    \caption[PORT Stream Processing]{A transducer individually processes each item in an input
+  sequence, updating its internal state and producing output according
+  to the rules described in its program.}
+  \label{fig:processing}
+\end{figure}
 
 %\iffalse
 %Each action either processes a single event from the input stream, possibly additionally updating some registers of the transducer.
@@ -59,7 +59,7 @@ event from the input stream, which may update some of the registers, and then wr
 %selecting specific events out of an activity stream.
 %
 %Implementing
-%a program written in PORT 
+%a program written in PORT
 %to identify a pattern of activity works as follows.
 %As illustrated in Figure~\ref{fig:Processing}, a pattern is encoded as a list of datawords, and compared against
 %events from the
@@ -113,7 +113,7 @@ event from the input stream, which may update some of the registers, and then wr
 %
 %
 %A PORT program can be divided into two sections, the preamble and the body, as shown in
-%Figure~\ref{lst:PreambleBody}. 
+%Figure~\ref{lst:PreambleBody}.
 %The preamble defines the sorts of events
 %expected
 %to appear in an input event stream and the set of parameters
@@ -125,7 +125,7 @@ event from the input stream, which may update some of the registers, and then wr
 %
 %The body of a PORT program consists of a list of datawords that
 %will configure the states and transitions
-%of a mutator. 
+%of a mutator.
 %Each dataword (excluding usages of the NOT operator, discussed further
 %in~\ref{subsub:NOT}) configures a single
 %state and sets the rules that will govern how the mutator transitions into that state.
@@ -149,7 +149,7 @@ event from the input stream, which may update some of the registers, and then wr
 \label{sub:SyntaxAndSemantics}
 
 Figure~\ref{lst:SyntaxGrammar} shows the grammar of PORT's core language.
-A program is split into two parts: the \emph{preamble} consisting of type and event definitions, and the \emph{body} of the program which consists of an action expression. 
+A program is split into two parts: the \emph{preamble} consisting of type and event definitions, and the \emph{body} of the program which consists of an action expression.
 
 \begin{figure}[t]
 \centering
@@ -274,7 +274,7 @@ Using this syntactic short-hand, the action given above can be expressed more co
 
 
 \noindent\textbf{Sequencing, Implicit Repetition, and Negation}
-%In our design of PORT we have decided against the inclusion of the repetition and choice constructs supported by general-purpose stream processing languages. This design decision greatly simplifies the transducer construction as we do not have to deal with elimination of epsilon transitions expressing nondeterministic choice. 
+%In our design of PORT we have decided against the inclusion of the repetition and choice constructs supported by general-purpose stream processing languages. This design decision greatly simplifies the transducer construction as we do not have to deal with elimination of epsilon transitions expressing nondeterministic choice.
 Atomic actions can be sequenced to form compound action expressions that match and transform sequences of events, $\mathit{action}_1 \texttt{;} \mathit{action}_2$. PORT simplifies the handling of unbounded event sequences by using implicit repetition semantics.
 If the next event in the input stream is not matched by the current atomic action in the action sequence, the event is simply copied to the output stream. The transducer moves on by attempting to match the next input event against the current atomic action.
 
