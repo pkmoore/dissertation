@@ -72,6 +72,32 @@ made it easier to work with CrashSimulator,
 those without this background were still able to identify bugs using the
 built-in anomalies.
 
+
+
+
+ \begin{figure}
+ \begin{lstlisting}[basicstyle=\ttfamily,gobble=4]
+     --- ./coreutils_original/coreutils-8.28/src/uniq.c
+     +++ ./src/uniq.c
+     @@ -333,6 +333,11 @@
+      {
+        struct linebuffer lb1, lb2;
+        struct linebuffer *thisline, *prevline;
+     +  struct stat sb;
+     +
+     +  stat(infile, &sb);
+     +  if (S_ISBLK (sb.st_mode) || S_ISCHR (sb.st_mode))
+     +    die (EXIT_FAILURE, errno, "error opening device file %s",
+              quotef (infile));
+
+        if (! (STREQ (infile, "-") || freopen (infile, "r", stdin)))
+          die (EXIT_FAILURE, errno, "%s", quotef (infile));
+\end{lstlisting}
+\caption[Participant Submitted Patch]{Example of patch submitted by a CrashSimulator user study participant.
+This patch prevents the coreutils `uniq` utility from processing block devices. }
+\label{fig:participantpatch}
+\end{figure}
+
 \subsection{Tool Limitations Identified by Participants}
 \label{subsec:crashsim-patches}
 
