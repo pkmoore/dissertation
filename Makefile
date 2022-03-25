@@ -31,7 +31,7 @@ $(PAPER).bbl-without-pdflatex: bibliography.bib-without-pdflatex
 	export TEXINPUTS=.:./latex-styles:; \
 	latex $(PAPER); bibtex $(PAPER); latex $(PAPER); latex $(PAPER)
 
-$(PAPER).bbl: bibliography.bib
+$(PAPER).bbl: bibdata.bib
 	export TEXINPUTS=.:./latex-styles:; \
 	pdflatex $(PAPER); bibtex $(PAPER); pdflatex $(PAPER); pdflatex $(PAPER)
 
