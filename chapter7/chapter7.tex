@@ -1,3 +1,23 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
-\lipsum[5-8]
+
+Environmental bugs can cause applications to fail after they have deployed necessitating costly efforts to diagnose,
+fix,
+and deploy an application.
+In this work we have covered our novel approach for identifying such bugs \textit{before} deployment.
+These efforts center around the SEA technique and its implementation,
+CrashSimulator.
+This tool uses SEA to identify bugs by simulating anomalies using recordings of the system calls an application makes.
+Using CrashSimulator,
+we were able to find many high-impact bugs in popular, battle-tested applications.
+
+We also discussed PORT,
+our domain specific language for describing anomalies and opportunities to simulate them.
+PORT was inspired by a CrashSimulator user study which found that ``capturing'' anomalies using existing
+general purpose programming languages was awkward and error prone.
+PORT is closely tailored toward its task of encoding anomalies which helps its users write clear,
+maintainable programs that encode complex anomalies.
+We were able to use PORT to write programs that could replace existing CrashSimulator checkers and mutators.
+Further, PORT allowed us to expand SEA to other domains such anomalies that appear in USB traffic.
+This capability allowed us to write programs that can simulate malicious traffic such as BADUSB attacks
+and failure-causing device configurations like reused device identifiers.
