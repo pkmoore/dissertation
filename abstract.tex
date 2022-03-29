@@ -42,7 +42,6 @@ harmful to user experience,
 and damaging to developer reputations.
 What is needed is a way to detect situations where an application may fail
 \textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a failure.
-
 In searching for an answer to this problem one key observation became clear:
 the causes of these environment-related failures
 often can be seen in the
@@ -52,7 +51,7 @@ By taking advantage of this concept,
 we were able to develop two techniques that allow developers to catch environmental bugs
 before an application is deployed. 
 The first technique,
-known as Simulating Environmental anomalies (SEA),
+known as Simulating Environmental Anomalies (SEA),
 allows developers to record features from one environment
 after an application has failed and use them to identify if other
 applications are likely to fail in a similar manner.
@@ -75,7 +74,8 @@ which uses the aforementioned event processing techniques
 to ease the development of recording and simulating an anomaly.
 PORT programs can both detect opportunities to
 simulate an anomaly, \textit{and} modify the stream so that anomaly is present.
-To see how well PORT achieved its intended purpose, we used it to recreate and
+
+We tested how well PORT achieved its intended purpose by using it to recreate and
 replace the anomalies used in our original SEA work.
 These new PORT programs were shorter, easier to read, and easier to
 maintain than the lengthy and complex Python scripts they replaced.
