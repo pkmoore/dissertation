@@ -1,37 +1,26 @@
-\chapter{Background}
+\chapter{What is an Environment?}
 \label{chap:background}
 
-Here's where we're going to introduce background material on environmental bugs,
-recording and replaying applications, all that kinds of stuff.
-Some of this will come out of the SEA paper's background section.
-
-
-\section{What is an environment}
-\label{sec:whatisenvironment}
-
-It is important
+In order to see how an application's environment can contribute to the presence of bugs, it is important
 to have a clear understanding
-of what constitutes an application's environment
-in order to see how it can contribute to the presence of bugs.
-An application's environment consists of
+of what we mean by an environment. In this context, an environment consists of
 all of the components an application depends upon
-that its developers do not control.
+that are out of the control of their developer.
 In practice, this is everything other than the code and data packaged
 within the application itself.
-Typically testers
-focus on explicit inputs to the application
-and overlook the implicit inputs
-coming from these uncontrolled components.
 
-Anything external to the application can be
+
+These external elements can be
 configured in unexpected ways.
 For example, library search rules can result in default system libraries
 being loaded instead of
 the versions deployed alongside the application.
-These external resources can be thought of as
-providing implicit inputs to the program that affect its flow of execution.
-An investigation of bug reports has shown that environmental bugs in the
-following categories have been found in major applications.
+Typically, testers
+focus on explicit inputs to the application
+and overlook the implicit inputs
+coming from these uncontrolled components. As a result, these external resources can affect the flow of execution in unexpected ways.
+An investigation of bug reports has found environmental bugs in the in major applications fall into the 
+following categories.
 
 \begin{itemize}
 
@@ -93,9 +82,3 @@ differences in interpreting
 how to execute complex instructions~\cite{Microarch}.
 
 \end{itemize}
-
-
-\section{Techniques for Simulating}
-\label{sec:simulating}
-
-\lipsum[27-30]

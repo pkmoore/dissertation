@@ -1,7 +1,8 @@
 %% Chapter 1
 \chapter{Introduction}
 \label{chap:intro}
-\textit{No Battle Plan Survives Contact With the Enemy --- Helmuth von Moltke}
+
+\epigraph{No Battle Plan Survives Contact With the Enemy}{Helmuth von Moltke}
 
 In order to meet the needs of an ever-growing user base,
 software is expected to run in an increasing variety of deployment \emph{environments}. Generally, it is difficult to know everything that applications might come up against when deployed in such environments. As a consequence, it is perhaps not surprising that, no matter how well an application is tested before its release,
@@ -59,22 +60,25 @@ By cataloging these features,
 which we refer to as ``anomalies,'' and using them to systematically and reproducibly test other applications, we can predict behavior before deployment, saving time, developer effort, money, and most importantly the developer's reputation.
 In this thesis we discuss the tools and techniques (illustrated in Figure~\ref{fig:overview}) we created in order to achieve this end.
 
-\section{The SEA Technique and CrashSimulator}
+\section{The SEA Technique}
 The first major component of this work is a novel technique we refer to as Simulating Environmental Anomalies (SEA).
 This technique is based on our finding that problematic features of an environment can often be identified in the results and side effects of the function calls, system calls, or other environmental interactions an application makes. When employing SEA,
 an application under test is exposed
 to the anomalies unique to a given environment
 in such a way that its responses will indicate
-potential for failures upon deployment. In this way, developers are given
-an easy and inexpensive way to learn from the mistakes of others.
-Once defined,
-we created a proof-of-concept implementation of SEA called CrashSimulator which applies the technique on the system calls made by Linux applications.
-The tool allows users to define ``checkers''
-to passively identify problems in recorded system call streams,
-and ``mutators'' which modify a system call recording so that it contains an anomaly.
-CrashSimulator can then replay this modified stream in order to see whether or not
-an application responds to the anomaly.
-Using CrashSimulator's checkers and mutators we were able to find high-impact bugs in widely deployed applications.
+potential for failures upon deployment. 
+The technique allows users to define ``checkers''
+to passively identify problems in application activity,
+and ``mutators'' which modify activity streams so that they contain an anomaly.
+This modified stream can then be replayed
+in order to gauge an application's response.
+These checkers and mutators may be shared between developers and applications providing 
+easy and inexpensive way to learn from the mistakes of others.
+
+We constructed
+a proof-of-concept implementation of SEA called CrashSimulator. This tool a ``record-and-replay'' strategy to apply the technique on the system calls made by Linux applications.
+By evaluating and modifying the parameters, return values, and side effects of these system calls we were able to expose
+high-impact bugs in widely deployed applications.
 
 \section{Pattern Observation Recognition and Transformation}
 The second component is a new domain specific language that is specifically tailored toward making the expression of anomalies easier for developers.
@@ -95,6 +99,16 @@ Further, we demonstrated that we could write programs that can detect and simula
   \caption[Overview of Components]{This work discusses several tools and techniques that work together to help their users find environmental bugs.  This diagram offers an informal view of how they fit together.  Please refer to the chapters listed alongside the primary components for more detailed discussion about their operation.}
   \label{fig:overview}
 \end{figure}
+
+\section{A CrashSimulator User Study}
+In order to determine how well CrashSimulator could be used by other developers we conducted a user study.
+In this study our undergraduate and graduate student participants used the tool to hunt for bugs in applications of their choosing.
+Once identified, they were asked to construct patches that fixed the bugs and submit them to upstream maintainers.
+Our participants had success finding bugs and submitting patches but ran into resistance getting them accepted.
+The reasons for this boil down to two deficiencies:
+improper adherence to patch submission procedure and maintainers opinions that the identified failures are not bugs.
+We discuss these outcomes, as well as direct feedback we received about CrashSimulator itself, in Chapter~\ref{chap:userstudy}.
+
 
 \section{Organization of the thesis}
 \label{sec:organization}

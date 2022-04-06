@@ -3,7 +3,7 @@
 
 Environmental bugs can cause applications to fail after they have deployed necessitating costly efforts to diagnose,
 fix,
-and deploy an application.
+and deploy them.
 In this work we have covered our novel approach for identifying such bugs \textit{before} deployment.
 These efforts center around the SEA technique and its implementation,
 CrashSimulator.
@@ -15,9 +15,25 @@ We also discussed PORT,
 our domain specific language for describing anomalies and opportunities to simulate them.
 PORT was inspired by a CrashSimulator user study which found that ``capturing'' anomalies using existing
 general purpose programming languages was awkward and error prone.
-PORT is closely tailored toward its task of encoding anomalies which helps its users write clear,
-maintainable programs that encode complex anomalies.
-We were able to use PORT to write programs that could replace existing CrashSimulator checkers and mutators.
-Further, PORT allowed us to expand SEA to other domains such anomalies that appear in USB traffic.
+PORT is closely tailored toward its task of
+finding and manipulating patterns in application activity recordings.
+This means it can help users write clear,
+maintainable programs.
+We were able to use PORT to replace existing CrashSimulator checkers and mutators.
+Further, PORT allowed us to expand SEA to other domains, such as anomalies that appear in USB traffic.
 This capability allowed us to write programs that can simulate malicious traffic such as BADUSB attacks
 and failure-causing device configurations like reused device identifiers.
+
+Additionally, 
+we hope to see wide-spread adoption of these
+tools in continuous
+integration and deployment pipelines. This could enable current and future
+applications to be tested against an ever-increasing repository of
+environmental bugs.
+The second would be the development of a user community in which developers can exchange PORT programs and their experiences to increase knowledge about what situations have caused failures.  Collectively, 
+this could enable the introduction of new applications without the catastrophic consequences of a deployment failure. 
+
+% need to mention that some people don't think these sorts of bugs are as big of a deal.
+% Hesitant to merge patches, push back on fixes
+% Help prevent wasted developer time and effort
+% repository of bugs

@@ -16,16 +16,14 @@ an easy and inexpensive way to learn from the mistakes of others, and
 thus save money and programming hours that otherwise would be spent to
 find and fix environmental bugs.
 
-We found SEA capable of finding bugs,
-both known and unknown,
-in Linux applications ranked
-highly on Debian's popularity contest
-by implementing it in a proof of concept tool
+We found the SEA technique was capable of finding bugs,
+both known and unknown, by implementing it in a proof of concept tool
 called {\em CrashSimulator}\footnote{Our approach is
 loosely inspired by flight simulators, which test pilot aptitude under a
 variety of rare, adverse scenarios (water landings, engine failures,
 etc.) before the pilots are certified to work in practice.}
-and evaluating its performance~\cite{DebPopCon}.
+We tested our tool by evaluating its performance in Linux applications ranked
+highly on Debian's popularity contest.~\cite{DebPopCon}.
 These applications were chosen
 because they are commonly used,
 well tested,
@@ -39,7 +37,7 @@ filesystem damage.  In total, the SEA technique was able to identify 65
 bugs with much less
 time and effort than would be required to set up real environments and
 execute the same applications within them -- illustrating SEA's
-usefulness for developers in a real-world settin.
+usefulness for developers in real-world settings.
 
 The main contributions in this work can be summarized as follows:
 

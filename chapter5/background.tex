@@ -49,7 +49,7 @@ Our takeaway
 from this study
 was that an application's activity
 can be systematically mined to find bugs.
-In this paper, we
+In this chapter, we
 show that the best way to extract this data
 is to treat application activity
 as a sequence of events. This enables us to use
@@ -155,7 +155,7 @@ manipulated for
 reuse in subsequent operations.
 
 \begin{figure}
-  \begin{lstlisting}[basicstyle=\ttfamily\small,gobble=4,xleftmargin=.8em]
+  \begin{lstlisting}[basicstyle=\ttfamily,gobble=4]
     event open {filedesc: Number@ret};
     event read {filedesc: Number@0};
     event close {filedesc: Number@0,
@@ -164,7 +164,7 @@ reuse in subsequent operations.
     not read({filedesc: ?fd});
     close({filedesc: ?fd});
   \end{lstlisting}
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+  \begin{lstlisting}[basicstyle=\ttfamily]
 pattern = Pattern(
   SeqOperator(
      PrimitiveEventStructure("OPEN", "a"),

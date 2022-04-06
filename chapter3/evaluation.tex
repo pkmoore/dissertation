@@ -144,20 +144,20 @@ can end up completely filling disks, exhausting available memory,
 
  \begin{table}[t]
     \centering
-    \begin{tabular}{l c c c c}
+    \begin{tabular}{l p{2cm} p{2cm} p{2cm} p{2cm}}
     \toprule{}
         Application     & Source Replaced & Preserve Xattrs & Preserve Timestamps & Copying Devices\\
 \hline
         {\tt mv}              & Correct             & Correct             & Correct         & Correct\\
-        {\tt mmv}             & Correct             & {\bf Security Flaw} & {\bf Time Loss} & Correct\\
-        {\tt install}         & Correct             & {\bf Security Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
-        {\tt perl File::Copy} & Correct             & {\bf Security Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
-        {\tt shutils}         & {\bf Corrupt}       & {\bf Security Flaw} & Correct         & Correct\\
+        {\tt mmv}             & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & Correct\\
+        {\tt install}         & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt perl File::Copy} & Correct             & {\bf Sec. Flaw} & {\bf Time Loss} & {\bf Fill Disk} \\
+        {\tt shutils}         & {\bf Corrupt}       & {\bf Sec. Flaw} & Correct         & Correct\\
         {\tt rust}            & Correct             & {\bf Sec. Flaw}     & {\bf Time Loss} & {\bf Fill Disk} \\
         {\tt boost::copyfile} & {\bf Corrupt}       & {\bf Sec. Flaw}     & {\bf Time Loss} & {\bf Fill Disk} \\
     \bottomrule{}
     \end{tabular}
-    \caption{Applications and libraries analyzed to determine whether or nt
+    \caption{Applications and libraries analyzed to determine whether or not
       they are able to correctly move a file from one device to another.
 Incorrect entries are either missing the needed check to ensure correct
      behavior or their implementation of the behavior was ineffective.}
@@ -370,6 +370,44 @@ when applications are actually exposed to problematic scenarios.
 %do so in practice,  as when we evaluated {\tt wc}'s successful response to
 %being run on a directory.
 
+\newgeometry{left=3cm}
+\begin{figure}[btp]
+\centering
+\begin{lstlisting}
+  @@ -1006,16 +1006,20 @@ void check()
+      exit(1);
+    }
+  
+  - #ifdef USE_FILE_INO
+     {
+      struct stat st;
+  +   fstat(fileno(in), &st);
+  +   if (!S_ISREG(st.st_mode)) {
+  +     print_error(_("\"%s\" is not a regular file"), file_name);
+  +     exit(-1);
+  +   }
+  + #ifdef USE_FILE_INO
+      int fd = open(new_name.c_str(),
+                    O_WRONLY | O_CREAT | O_TRUNC, st.st_mode);
+      if (fd >= 0) out = fdopen(fd, "w");
+  - }
+    #else
+  - out = fopen(new_name.c_str(), "w");
+  + out = fopen(new_name.c_str(), "w");
+    #endif
+  + }
+    if (!out) {
+      print_error(_("Could not open the file \"%s\" for writing.
+      File not saved."), file_name);
+      exit(-1);
+\end{lstlisting}
+\caption[Aspell Patch]{This listing shows a patch that corrects a deficiency in Aspell.  Lines 8 through 12 add a new check that ensures Aspell will stop execution rather than attempt to process any non-regular file
+(i.e. a file for which fstat() returns a
+ST\_MODE value that is not S\_IFREG).
+Prior to this patch's acceptance, Aspell would hang and fill the local disk with garbage data when processing an unusual file such as /dev/urandom}
+\end{figure}
+\restoregeometry
+
 \subsubsection{Beyond Filesystem Bugs - Poorly Configured Network Timeouts}
 \label{sec-timeout-bugs}
 
@@ -529,7 +567,7 @@ a failure when the application actually handles an anomaly correctly.
 On the opposite side, false negative reports happen when the tool indicates an application handles
 an anomaly when, in reality, it does not.
 
-\textbf{False Positives.}
+\paragraph{False Positives.}
 The primary source of false positives in CrashSimulator is an application
 responding to an anomaly with a different sequence of system calls
 than was expected by the checker.
@@ -614,7 +652,7 @@ and accepts the execution if either detects the expected sequence.
 %type of false positive gives us confidence that the default configuration
 %is satisfactory in the majority of cases.
 
-\textbf{False Negatives.}
+\paragraph{False Negatives.}
 False negatives are a fact of life in testing
 because of missing test cases or under-constrained checks
 of result correctness.

@@ -3,7 +3,7 @@
 
 \documentclass[letterpaper]{polythesis}
 
-\usepackage{adjustbox}
+\usepackage[export]{adjustbox}
 \usepackage{geometry}
 
 %% This controls the sizes, spacing, and font of section headings.  It
@@ -51,6 +51,9 @@
 \usepackage{listings}
 
 
+\usepackage{epigraph} 
+
+
 % Dummy text
 \usepackage{lipsum}
 %% this is a customized package
@@ -89,6 +92,30 @@
     \pagenumbering{arabic}
     \typeout{Thesis preface pages completed.}
     }
+
+
+\usepackage{xcolor, soul}
+\usepackage{listings}
+
+\definecolor{codebackground}{rgb}{0.95, 0.95, 0.92}
+
+\lstset
+{
+    frame            = tb, % hrule above and below
+    keepspaces       = true,
+    columns          = flexible,
+    basicstyle       = {\normalsize\ttfamily},
+    escapeinside     = {(*@}{@*)}, % for escaping
+    backgroundcolor  = \color{codebackground},
+    showstringspaces = false,
+    keywordstyle     = \color{blue},
+    stringstyle      = \color{red},
+    commentstyle     = \color{teal},
+    numbers          = left, % {none, left, right}
+    firstnumber      = 1,
+    numberstyle      = \scriptsize\color{black},
+    numbersep        = 5pt
+}
 
 %% New operators if you need them.
 % \DeclareMathOperator{\area}{area}
@@ -155,7 +182,7 @@
 }
 
 %% Comment out if you have no appendices.
-\appendix
-\include{appendix/appendix}
+%\appendix
+%\include{appendix/appendix}
 
 \end{document}

@@ -27,80 +27,80 @@ May 2022
 %%software updates, are becoming increasingly important in a wide variety of
 %%settings,
 
-In order to meet the needs of an ever-growing user base,
-software must be deployed and executed into an
-increasing set of new and unusual environments.
-Unfortunately, if not handled appropriately, any
-variations between these platforms
+Software is increasingly expected to operate across widely varying environments.
+If not handled appropriately, any
+differences between these environments
 could cause even well-tested applications to fail upon deployment.
-Anticipating and being prepared to handle all the potential combinations of
+Anticipating and being prepared to handle all the possible combinations of
 software and hardware that can affect an application’s ability to operate
-in a given deployment environment is an almost impossible task.
+is a major challenge.
 To make matters worse,
-recovering from these post-deployment failures is expensive,
+recovering from post-deployment failures is expensive,
 harmful to user experience,
 and damaging to developer reputations.
+
 What is needed is a way to detect situations where an application may fail
-\textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a failure.
-In searching for an answer to this problem one key observation became clear:
+\textit{before} it is deployed so that its deficiencies can be corrected without the negative consequences of a crash.
+We observed that
 the causes of these environment-related failures
 often can be seen in the
-communications between an application and its environment. These communications can include the
+communications between an application and its environment.
+These communications can include the
 system calls it makes or the messages it sends across a network.
 By taking advantage of this concept,
 we were able to develop two techniques that allow developers to catch environmental bugs
 before an application is deployed. 
+
 The first technique,
 known as Simulating Environmental Anomalies (SEA),
-allows developers to record features from one environment
-after an application has failed and use them to identify if other
+allows developers to record features from one environment in which
+an application has failed and use them to identify if other
 applications are likely to fail in a similar manner.
-The second technique involved 
-applying event processing strategies
-to application recordings
-using a new  domain specific programming language,
-in order to allow developers to
-to quickly write expressive programs that can analyze a stream of communications between an application and  its environment.
-
-To realize the SEA technique we implemented a tool called CrashSimulator.
-We were able to use it to find many high impact bugs in popular,
+Using this technique enabled us to find many high impact bugs in popular,
 battle tested applications.
-Based on the results of a user study we found that,
-while developers could use the tool successfully,
-capturing a problematic feature, known as an anomaly, was difficult.
-As a direct result of this observation we knew that a domain specific language would be required to make SEA usable in practical applications.
- To this end, we created PORT
-which uses the aforementioned event processing techniques
-to ease the development of recording and simulating an anomaly.
+
+The second technique is PORT, 
+a new  domain specific programming language
+that uses event processing techniques
+to simplify procedures for recording and simulating an anomaly.
+PORT
+allows developers
+to quickly write expressive programs that can analyze a stream of communications between an application and  its environment.
 PORT programs can both detect opportunities to
 simulate an anomaly, \textit{and} modify the stream so that anomaly is present.
 
 We tested how well PORT achieved its intended purpose by using it to recreate and
 replace the anomalies used in our original SEA work.
-These new PORT programs were shorter, easier to read, and easier to
+These new PORT programs were shorter, easier to read, and simpler to
 maintain than the lengthy and complex Python scripts they replaced.
-We also took advantage of PORT's extensibility by expanding SEA to USB
+We also took advantage of PORT's extensibility to apply SEA to USB
 traffic.
-We were also able to write programs that could identify patterns in and
-modify recordings of USB communications.
-Using this capability we were able to simulate
-BADUSB style attacks in recorded streams by modifying innocent streams
+As SEA enabled us to write programs that could identify patterns in, and
+modify recordings of, USB communications,
+we were able to simulate
+BADUSB style attacks by modifying innocent streams
 so that they contained the harmful features of such an attack.
 We were also able to simulate device identifier conflicts -- a situation that has
-plagued operating system developers in the past.
-We do so using a PORT program that modifies a recording so that these conflicts
-are present in device registration frames.
-In both cases, these recordings could be used
+long plagued operating system developers -- by using PORT to modify a recording so  these conflicts
+would be present in device registration frames.
+In both cases, these recordings could then be used
 to test how a system might respond should they occur in the real world.
 
 %Paragraph 4
-Our hope is that these tools and techniques will see wide
-adoption and use in improving application reliability and security. We envision this could occur in two different ways. The first would be wide-spread adoption of these
-tools in continuous
-integration and deployment pipelines. This could enable current and future
-applications to be tested against an ever-increasing repository of
-environmental bugs.
-The second would be the development of a user community in which developers can exchange PORT programs and their experiences to increase knowledge about what situations have caused failures.  Collectively, 
-this could enable the introduction of new applications without the catastrophic consequences of a deployment failure. 
+Our hope in developing these tools and techniques was to see them widely
+used in improving application reliability and security.
+But, to do so, these tools needed to be accurate, efficient, and easy to use. To test the latter quality, we 
+conducted a user study to see how well developers could integrate SEA into their workflows.
+At the conclusion of the study, we found that that participants were able to find new bugs in widely deployed software,
+build corrective patches,
+and submit them to the appropriate upstream maintainers.
+
+Unfortunately,
+in spite of some success finding and fixing bugs,
+our developers met resistance in getting their fixes incorporated.
+This resistance sprang from two sources: improper patch submission on the part of our participants, and a reluctance on the part of maintainers to view certain misbehaviors as bugs.
+The former may be dealt with by improving how we teach novices to interact with maintainers. The latter
+will require an effort to educate project maintainers on the value of identifying and fixing environmental bugs. Having reliable tools and techniques that can  simplify the implementation of these processes should make these educational efforts easier to promote. 
+
 
 \vspace*{3ex plus 1fil}

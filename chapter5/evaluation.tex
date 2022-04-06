@@ -64,17 +64,17 @@ application's system calls in order to carry out the remaining steps of the
 SEA technique.
 
 \begin{figure}
-\centering
-\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+\begin{lstlisting}[basicstyle=\ttfamily]
 event fstat {filedesc: Numeric@0};
 event stat {filename: String@0};
 event open {filename: String@0, filedesc: Numeric@ret};
+
 
 stat({filename: fn});
 open({filename: ?fn, filedesc: fd});
 fstat({fildesc: ?fd});
 \end{lstlisting}
-\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+\begin{lstlisting}[basicstyle=\ttfamily]
 event Statbuf {mode: String@2};
 event anystat {stat sb: Statbuf@1}
         | {lstat sb: Statbuf@1}
@@ -169,14 +169,21 @@ mutator behavior.
 
 \subsection{Extending PORT to Other Activity Representations}
 \begin{figure}
-  \begin{lstlisting}[basicstyle=\ttfamily\small,xleftmargin=.8em]
-event usbhid { src: String@0, dst: String@1,
-               data: String@13, transfertype: String@10 };
+  \begin{lstlisting}[basicstyle=\ttfamily,xleftmargin=.8em]
+event usbhid { src: String@0,
+               dst: String@1,
+               data: String@13,
+               transfertype: String@10 };
+               
+              
 num1 <- "00:00:1e:00:00:00:00:00";
 num2 <- "00:00:1f:00:00:00:00:00";
 src <- "2.1.1";
 dst <- "host";
-usbhid({src: ?src, dst: ?dst, data: ?num1}) -> usbhid({data: ->num2});
+
+
+usbhid({src: ?src, dst: ?dst, data: ?num1})
+       -> usbhid({data: ->num2});
   \end{lstlisting}
   \caption{A demonstration PORT program that matches USB activity indicating the '1' key is being pressed and transforming it to a new frame where the '2' key is being pressed}
   \label{fig:USB}
@@ -263,11 +270,9 @@ shows the average time required to complete the specified operation
 based on one hundred executions, as well as the number of system calls being processed in the recording.  This performance evaluation was run on a laptop using a four core processor running at 3.4 ghz with 16 gigabytes of memory.
 Our PORT compiler comes with a script to reproduce these results with one command.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
-\small
-\resizebox{\linewidth}{!}{
-  \begin{tabular}{|c|l|l}
+\begin{tabular}{|c|l|l}
 Utility and Operation & Exec. Time & No. Syscalls \\
               \hline
 gzip compress file   & 0.110           & 17  \\
@@ -287,8 +292,7 @@ telnet client        & 0.106           & 23  \\
 BADUSB               & 0.111           & 1116 lines \\
 ID Conflict          & 0.117           & 18992 lines \\
 \end{tabular}
-  }
-\caption{Average time required to process the specified recording based on 100 executions.}
+\caption[PORT Perfomance]{Average time required to process the specified recording based on 100 executions.}
 \label{tbl:RealWorldPerformance}
 \end{figure}
 
