@@ -1,10 +1,13 @@
 \chapter{Related Work}
 \label{chap:relatedwork}
 
-In this chapter we review the previous work consulted when developing the  bug identification tools and techniques documented in this dissertation. For the design and implementation of SEA and CrashSimulator, we looked at a number of
+In this chapter we review the previous work consulted when developing the  bug identification tools and techniques documented in this dissertation.
+For the design and implementation of SEA and CrashSimulator, we looked at a number of
 studies in bug detection, data mining, the influence of environment on
 application behavior, and protocols for checking program responses to anomalous
-situations. In developing the PORT language, we examined current work in system call stream processing applications and event stream processing languages and algorithms. For all topics, we provide insights on the relevance of this earlier work to the development of our tools.
+situations.
+In developing the PORT language, we examined current work in system call stream processing applications and event stream processing languages and algorithms.
+For all topics, we provide insights on the relevance of this earlier work to the development of our tools.
 
 % One of the major limitations of many automated testing tools is a reliance
 % on the availability of a target application's source code.  Out of the top
@@ -34,7 +37,6 @@ situations. In developing the PORT language, we examined current work in system 
 %
 %Crash reproduction by test case mutation~\cite{DBLP:conf/sigsoft/XuanXM15}.
 %
-%\fi
 
 
 \section{Static analysis}
@@ -63,7 +65,8 @@ it depends~\cite{silakov2010improving, javacompliance-www}. Like
 CrashSimulator, these techniques
 address an application's interactions with its
 environment. However, CrashSimulator is only interested in the application's
-response to anomalies, while  these studies were used to answer the larger question of whether a given 
+response to anomalies,
+while  these studies were used to answer the larger question of whether a given
 environment behaved as expected.
 
 
@@ -72,15 +75,16 @@ Substantial work has been done in validating API and protocol behaviors,
 e.g., finding faults in the Linux TCP implementation, SSH2 and
 RCP~\cite{Udrea:2008}, BGP configuration~\cite{Feamster:2005}, and
 identifying network vulnerabilities~\cite{ritchey-sp00}.
-\fi
 
 \section{API Protocol Mining}
-Extensive work has been done on mining source code to learn API protocols. In turn, these protocols can detect
+Extensive work has been done on mining source code to learn API protocols.
+In turn, these protocols can detect
 common usage violations, such as missing method calls
 (see, e.g.,~\cite{mariani2007compatibility,
 DBLP:journals/ase/WasylkowskiZ11, DBLP:conf/icse/PradelJAG12,
 DBLP:journals/tosem/MonperrusM13, DBLP:conf/icse/JamrozikSZ16}). Though these
-techniques primarily target object component interactions to generate test suites, the techniques explored in
+techniques primarily target object component interactions to generate test suites,
+the techniques explored in
 these works could be used to mine system call patterns in source code.
 This would enable researchers
 to find checkers that identify incorrect responses to environmental
@@ -219,7 +223,7 @@ system calls and apply SEA at that point.
 %frameworks that enable developers to construct application-specific models,
 %which have proven effective at finding detailed application flaws. However,
 %utilizing these methods requires a knowledge of what failure needs must
-%be acquired, and a specification of all relevant system properties. 
+%be acquired, and a specification of all relevant system properties.
 %NetCheck diagnoses application failures without application-specific
 %models.  Khanna~\cite{khanna2007automated} identifies the source of
 %failures using a rule base of allowed state transition paths.
@@ -229,7 +233,6 @@ system calls and apply SEA at that point.
 %anomalies in network behavior, file system behavior, and other environmental-specific conditions. This enables the tool to test
 %applications other than the ones with which the anomalies were originally
 %discovered.
-%\fi
 
 
 %% The following is old stuff -- not sure how much should be integrated
@@ -275,7 +278,7 @@ system calls and apply SEA at that point.
 %computationally inexpensive. The downside of this simplicity is that they
 %cannot craft inputs with any sort of intelligence. This means that a
 %great deal of time can be spent mutating inputs without much success in
-%terms of bug identification. Also, they cannot specifically identify 
+%terms of bug identification. Also, they cannot specifically identify
 %the source of faults in an application. They can only signal that a
 %fault has occurred at some point during a test run.  Furthermore, like
 %white-box tools, these tools fail to take into account the environment
@@ -420,7 +423,7 @@ call sequences of an application.
 %counter information to recognize loops.
 %In addition, system calls made within standard libraries (such as libc) are excluded from the automaton as the authors felt that these system calls do not necessarily help capture the unique nature of system call behavior within the program.
 
-Ko et al.~\cite{DBLP:conf/acsac/KoFL94} 
+Ko et al.~\cite{DBLP:conf/acsac/KoFL94}
 takes a different approach.
 Each system call in the
 stream is converted to a standard audit-policy record format, which is then
@@ -434,7 +437,7 @@ Another alternative is
 Systrace~\cite{DBLP:conf/uss/Provos03},
 which
 supports fine-grained process confinement
-via system call monitoring and uses an associated policy language 
+via system call monitoring and uses an associated policy language
 to describe the prescribed action when a rule evaluates to true.
 Phoebe~\cite{DBLP:journals/corr/abs-2006-04444}
 identifies patterns of system call failures during normal program execution
@@ -448,7 +451,7 @@ intent,
 so Giffin et al. ~\cite{DBLP:conf/uss/GiffinJM02} used
 push-down automata to model the possible valid
 remote call streams that an application might generate.
-The application's incoming stream 
+The application's incoming stream
 is then vetted against a model
 to determine whether particular calls are valid and therefore executable.
 
@@ -512,7 +515,7 @@ frequently compiled to a low-level general purpose language (C, C++, etc.) to al
 processing of the stream. During the compilation process, automata are typically
 built to recognize the patterns specified by the queries. For instance, Agrawal et
 al.~\cite{DBLP:conf/sigmod/AgrawalDGI08} describe how patterns written in the SASE+ stream
-processing language are converted to non-deterministic finite automata. 
+processing language are converted to non-deterministic finite automata.
 
 MatchRegex~\cite{DBLP:conf/debs/Hirzel12} is a CEP engine for IBM’s Stream Processing
 Language. Predicates defined on the individual events appearing in the
@@ -523,7 +526,7 @@ and “Kleene plus” over patterns consisting of predicates (boolean expression
 The CEP systems described in this subsection are capable
 of recognizing the same stream patterns as PORT,
 but do not incorporate the
-transformation primitives 
+transformation primitives
 required by the applications
 envisioned for PORT. Although CEP systems do allow for the
 generation of composite events from raw events,

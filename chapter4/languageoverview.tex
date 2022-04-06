@@ -36,7 +36,7 @@ event from the input stream, which may update some of the registers, and then wr
 
 \begin{figure}[t]
   \centering
-  \includegraphics[scale=1]{chapter5/images/processing}
+  \includegraphics[scale=1]{chapter4/images/processing}
     \caption[PORT Stream Processing]{A transducer individually processes each item in an input
   sequence, updating its internal state and producing output according
   to the rules described in its program.}
@@ -206,7 +206,7 @@ The abstraction mechanism used for these parameter lists can also be applied to 
   type SB {dev: String@0,
            ino: String@1,
            mode: String@2};
-           
+
   event fstat {fdesc: Number@0, sbuf: SB@1};
 \end{lstlisting}
 
