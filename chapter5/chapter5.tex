@@ -3,9 +3,9 @@
 
 Our evaluation of CrashSimulator has shown that it is able to find new environmental bugs in widely deployed software. Yet, before advocating its broad application, we felt it would be prudent to ensure it
 could be effective when employed by outside developers.
-After all it's initial ``users'' in the study were developers with a high degree of expertise in its operation.
+After all, it's initial ``users'' in the study were developers with a high degree of expertise in its operation.
 
-To investigate the useability of the tool,
+To investigate the usability of the tool,
 we designed and conducted a study in which 12 undergraduate and graduate students with varying levels of experience went looking for bugs in commonly used applications.
 The study took place over the course of six sessions
 of an Application Security class.
@@ -20,28 +20,34 @@ Each weekly entry listed what application the participant was
 investigating,  what bugs they found, and any interesting details discovered along the way. An example of such a log may be found in Figure~\ref{fig:examplereport}.
 
 Our goal for this user study was two-fold.  First and foremost,
-we wanted to see if the participants were able to use the tool to find bugs with no previous experience and only limited instruction.
+we wanted to see if the participants were able to use CrashSimulator to find bugs with no previous experience and only limited instruction.
 We discuss these results in~\ref{subsec:bugs-by-participants}, and summarize the bugs that were found.
 Second, we wanted the participants to help us identify usability issues
 or flaws within the tool itself. These observations are shared in~\ref{subsec:crashsim-patches}. Finally, we share our observations
-of how students interacted with the tool and what shortcomings
+of how participants interacted with the tool and what shortcomings
 it revealed in~\ref{subsec:tool-shortcomings}.
 
 \section{Study Parameters}
 \label{sec:studyparameters}
 
-As mentioned above, the study participants were students enrolled in an Application Security class. The class consisted of   graduate students and   undergraduate. Students worked independently as (true? could they work as teams?) Fill in any other details that are relevant to the study itself.
+Though the design of this study is fairly basic, a few details on how it was conducted are called for. As stated above, all participants were students enrolled in an Application Security class.
+All participants worked independently during class time, though they had the option to ask for assistance from one of CrashSimulator's developers should they encounter problems with the tool.
+They were also encouraged to work on this effort on their own time outside of class.
+Second, we allowed participants to select which applications they would test.
+In general, they gravitated towards widely deployed, simple, command line applications.
+This is likely because these sorts of applications require much less initial setup.
 
-Please note that the tables and bug counts noted in earlier
-chapters do not reflect the results discussed in this chapter. We decided to count evaluation bugs and user study bugs separately as two of the bugs found in the user study
+It is important to note that all tables and bug counts reported in earlier
+chapters do not reflect the results discussed in this chapter.
+We decided to count evaluation bugs and user study bugs separately because two of the bugs found in the user study
 had been previously identified
 in our evaluation.
 The overlapping bugs were found independently,
-as the students weren't aware of the paper or the evaluation results.
-We are enforcing this separation To make sure our total counts were not inflated.
+as the participants weren't aware of the paper or the evaluation results.
+We enforced this separation to ensure our total counts were not inflated.
+Finally, this study was reviewed and categorized as ``exempt'' by NYU's Institutional review board.
+We received this designation in part because we made the decision not to capture any demographic information. Given that the goal of our study was to measure the usability of the tool, we deemed it not necessarily to solicit the more personal data that would mandate a more detailed review by the IRB board. 
 
-
-This study was reviewed and exempt by the IRB.
 
 \newgeometry{left=2cm}
 \begin{figure}[btp]
@@ -52,7 +58,7 @@ This study was reviewed and exempt by the IRB.
 \end{figure}
 \restoregeometry
 
-\section{Bugs Found by Participants}
+\section{Results: Bugs Found by Participants}
 \label{subsec:bugs-by-participants}
 Study participants found a total of 18 bugs using CrashSimulator's
 ``Unusual Filetype Mutator.''
@@ -70,7 +76,7 @@ Most were submitted to Ubuntu Linux's main bug tracker, which is intended to man
 In these cases,
 maintainers classified the bugs as ``WONTFIX'' and referred the submitter to the correct upstream project.
 This response indicates that our participants were unaware of the relationship between distribution maintainers and application maintainers.
-This deficiency makes it clear that  further instruction is needed about the importance of sending patches to the correct place.
+This deficiency makes it clear that further instruction is needed about the importance of sending patches to the correct place.
 
 \paragraph{Overly Broad Patches}
 A second reason that patches were rejected is because they were considered ``overly broad'' by the maintainers that reviewed them.
@@ -81,10 +87,10 @@ Typically this is resolved through dialog between the submitter and maintainer w
 In this specific case, the participant did not follow up further with the maintainer.
 
 \paragraph{``Not A Bug''}
-A final common outcome was that patches were rejected because the behavior they intended to fix was determined to be ``not a bug'' by the receiving maintainer.
+A final common outcome was that patches were rejected because the behavior they intended to fix was deemed ``not a bug'' by the receiving maintainer.
 This opinion stems from varying definitions of ''application misbehavior.''
-In our work on the SEA technique and CrashSimulator, we argued that  consuming large amounts of resources or running forever constituted undesireable behavior in an application.
-The maintainer in this case argued that such outcomes may be the correct
+In our work on the SEA technique and CrashSimulator, we argued that  consuming large amounts of resources or running forever constituted undesirable behavior in an application.
+The maintainer in this case argued that such outcomes may be correct
 for some usages.
 This is another situation where discussions between the submitter and maintainer would be needed to derive an acceptable fix.
 
@@ -127,21 +133,21 @@ This patch prevents the coreutils `uniq` utility from processing block devices. 
 \label{fig:participantpatch}
 \end{figure}
 
-\section{Tool Limitations Identified by Participants}
+\section{Results: Tool Limitations Identified by Participants}
 \label{subsec:crashsim-patches}
 
-One of the benefits of open source software is that it can be maintained and improved by the community of its users.
+One of the benefits of open source software is that it can be maintained and improved by its user community
 This user study indicates that CrashSimulator is able to garner this sort of interaction from its users.
 Students submitted five patches
 to the tool's code over the
 course of the study period.
 Three of these reports included patches built by the reporting students that directly
 corrected a bug.
-The remaining two patches fixed issues with the scripts responsible for installing CrashSimulator.
+The remaining patches fixed issues with the scripts responsible for installing CrashSimulator.
 
-The students also submitted 16 reports identifying unsupported system calls. There were also 17 reported bugs in
+The students also submitted 16 reports identifying unsupported system calls, and reported 17 bugs in
 existing system call handlers or test orchestration code.
-On the one hand, this is encouraging.  The necessity of adding
+On the one hand, these results are encouraging.  The necessity of adding
 support for new system calls
 indicates that the students were
 using CrashSimulator to test a wide variety of new applications.
@@ -175,7 +181,7 @@ users should be concerned.
 
 To conclude, our user study has revealed both strengths and weakness
 of the CrashSimulator tool.
-We were encouraged by the fact that students were able to find bugs in and build patches for real world applications.
+We were encouraged by the fact that participants were able to find bugs in and build patches for real world applications.
 Thus, we feel our results show CrashSimulator is usable by outside developers even if there is still work to be done in getting these patches accepted. 
 We are also pleased with the improvements that came to the tool as a result of the collaboration between study participants and CrashSimulator's developers.
 The tool has had numerous bug fixes and usability enhancements as a result of this effort.

@@ -1,10 +1,10 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-Environmental bugs can cause applications to fail after they have deployed necessitating costly efforts to diagnose,
+Environmental bugs can cause applications to fail after they have deployed, which necessitates costly efforts to diagnose,
 fix,
 and deploy them.
-In this work we have covered our novel approach for identifying such bugs \textit{before} deployment.
+In this work we present a novel approach for identifying such bugs \textit{before} deployment.
 These efforts center around the SEA technique and its implementation,
 CrashSimulator.
 This tool uses SEA to identify bugs by simulating anomalies using recordings of the system calls an application makes.
@@ -13,27 +13,31 @@ we were able to find many high-impact bugs in popular, battle-tested application
 
 We also discussed PORT,
 our domain specific language for describing anomalies and opportunities to simulate them.
-PORT was inspired by a CrashSimulator user study which found that ``capturing'' anomalies using existing
-general purpose programming languages was awkward and error prone.
-PORT is closely tailored toward its task of
+Our goal with PORT was to develop a way to ``capture'' anomalies that was easy and efficient
+This was possible because PORT is closely tailored toward its task of
 finding and manipulating patterns in application activity recordings.
-This means it can help users write clear,
-maintainable programs.
+This narrow purpose allowed us do build a language that
+helps users write clear,
+maintainable programs
+by automatically handling
+aspects of the task that are not directly related to their goal.
 We were able to use PORT to replace existing CrashSimulator checkers and mutators.
 Further, PORT allowed us to expand SEA to other domains, such as anomalies that appear in USB traffic.
-This capability allowed us to write programs that can simulate malicious traffic such as BADUSB attacks
+This capability allowed us to write programs that can simulate malicious traffic, such as BADUSB attacks
 and failure-causing device configurations like reused device identifiers.
 
+Finally,
+we conducted a user study where participants used CrashSimulator to find and fix environmental bugs in popular applications.
+Our participants had success finding bugs and writing patches to correct them but met resistance getting these patches accepted by project maintainers.
+This resistance came down to improper patch submission on the part of our participants and a reluctance on the part of maintainers to agree that the identified mis-behaviors were bugs.
+Moving forward, the former could be corrected by better educating participants on patch submission etiquette. The latter will require an educational effort around environmental bugs and their impact on software. If the consequences of leaving these bugs at large was more clearly understood, we feel this resistance will be reduced.
+
+We hope that having tools like CrashSimulator and PORT will make such an effort possible.
 Additionally, 
 we hope to see wide-spread adoption of these
 tools in continuous
 integration and deployment pipelines. This could enable current and future
 applications to be tested against an ever-increasing repository of
 environmental bugs.
-The second would be the development of a user community in which developers can exchange PORT programs and their experiences to increase knowledge about what situations have caused failures.  Collectively, 
+These efforts would all benefit from the development of a user community in which developers can exchange PORT programs and their experiences. The body of knowledge that would result from such a communal effort will help to increase understanding of the situations that caused failures.  Collectively, 
 this could enable the introduction of new applications without the catastrophic consequences of a deployment failure. 
-
-% need to mention that some people don't think these sorts of bugs are as big of a deal.
-% Hesitant to merge patches, push back on fixes
-% Help prevent wasted developer time and effort
-% repository of bugs
