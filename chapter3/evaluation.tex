@@ -82,8 +82,13 @@ Our experiences testing applications with these anomalies are detailed below.
 In our first test we decided to evaluate the tool in its simplest possible
 configuration -- employing the {\bf ``null mutator.''}
 This mutator takes no action and simulates no anomalous conditions.
-It simply allows checkers to evaluate an application's behavior
-as it carries out a potentially-buggy operation.
+Instead of presenting an anomalous scenario,
+it instead allows a checker to observe an unimpeded execution of an application.
+This means the checker is able to identify the incorrect behaviors
+an application makes regardless of the environment in which it is running.
+This differs from more complex cases were checkers observe an application's
+response to a simulated anomaly.
+
 We decided to look at how applications
 move files around on the filesystem.
 Though, in many cases, this operation can be handled
@@ -359,6 +364,45 @@ Table~\ref{table:applicationresponses}.
 These tables serve to document the accuracy of the tool's
 evaluation of application behavior and illustrate what misbehavior occurs
 when applications are actually exposed to problematic scenarios.
+
+Because the way a given application fails in response to an anomaly can vary widely from case to case,
+it is worthwhile to discuss a few specific examples from~\ref{table:unexpectedtypes}.
+
+\paragraph{Aspell and Symbolic Links}
+One of the most dramatic failures we encountered was found when we determined that {\tt aspell} took no action when it was asked to spell check a symbolic link.
+Blindly processing the file pointed to by a symbolic link is dangerous because it is impossible
+to know how to handle the file without
+resolving the destination of the link and examining it.
+Given high likelihood of failure in this situation,
+we manually tested a scenario where Aspell was asked to spell check a symbolic link that pointed to {\tt /dev/urandom}.
+As predicted by CrashSimulator,
+{\tt aspell} failed to recognize the functionally-infinite file at the destination of the link and tried to exhaustively read it into memory.
+This triggered two consequential failures.
+First, the user interface became corrupted as it tried to display the binary data being read from the file.
+This had the effect of breaking the controls the user might use to abort the failed operation by both obscuring the menu options and preventing the application from responding to any key presses made by the user.
+Second,
+{\tt aspell} began to infinitely read the contents of {\tt /dev/urandom} into a temporary file in the current directory.
+This very quickly filled the disk of the test machine rendering it inoperable.
+While the impact of the former failure is inconvenient,
+the latter is very dangerous and could require difficult measures such as mounting the disk under another operating system in order to delete the offending file.
+
+Even without such dramatic failures,
+analysis of {\tt aspell}'s source code confirm's CrashSimualtor's prediction.
+{\tt Aspell}'s developer included specific checks to prevent the application from processing character devices.
+They had simply missed the edge case presented by symbolic links.
+This outcome further reinforces CrashSimulator's usefulness in finding such cases that might be missed by an application's existing test suite.
+We constructed a patch (the final version of which is shown in Figure~\ref{fig:aspellpatch}) to correct this issue that was accepted with minor modifications.
+
+
+\paragraph{Coreutils and Special Files}
+Another interesting pattern can be observed in the way the tested {\tt coreutils} programs can 
+Failures can also be found when applications operate 
+
+We further discuss what this resistance looks like in Chapter~\ref{chap:userstudy}.
+
+
+
+
 %One possibility is that CrashSimulator asserts
 %that the application will fail
 %and in practice, it does.  We found this when we evaluated
@@ -405,6 +449,7 @@ when applications are actually exposed to problematic scenarios.
 (i.e. a file for which fstat() returns a
 ST\_MODE value that is not S\_IFREG).
 Prior to this patch's acceptance, Aspell would hang and fill the local disk with garbage data when processing an unusual file such as /dev/urandom}
+\label{fig:aspellpatch}
 \end{figure}
 \restoregeometry
 
@@ -497,61 +542,61 @@ specify a timeout value.  This means an attacker can transmit one byte of
 data per timeout period (per Linux's value of 19 minutes for TCP sockets),
 allowing them to keep the application alive instead of quitting.
 
-\subsubsection{Bugs Found By Participants}
-Because the above tests were carried out by CrashSimulator's developers,
-who necessarily have a high degree of expertise in its operation,
-we felt it prudent to ensure the tool was useful
-to outside developers as well.
-To investigate this angle,
-we conducted a user study
-with 12 undergraduate and graduate students with varying backgrounds.
-Study participants found a total of 11 bugs using CrashSimulator.
-Of these bugs, nine were found using the ``Unusual Filetype'' mutator.
-Five of these bugs have since been reported to the appropriate maintainers,
-and three of these reports included patches
-that correct the bug
-built by the reporting student.
-
-These results are important
-because they confirm
-users, other than the original development team,
-can use the tool to find bugs in real world applications.
-Participants commented that narrowing the source of a bug
-down to a particular sequence of system calls
-was helpful in identifying the area of
-code responsible for the bug -- a feature
-that decreased the time required to produce a fix.
-Though observation of study participants
-showed that familiarity with operating systems concepts
-made it easier to work with CrashSimulator,
-those without this background were still able to identify bugs using the
-built in anomalies.
-
-On a less positive note,
-the study did reveal
-some shortcomings
-of the tool.
-First,
-it became clear that the tool
-does not have a clear mechanism
-for determining
-which application behaviors constitute a ``bug.''
-For example, an application's developer
-may have intended that an application processing an ``infinitely long'' file should run continuously
-until killed by an outside command.
-Therefore, that behavior should not be classified as a bug.
-Second,
-it demonstrated that
-simply reporting that an application did or did not change its behavior
-in the presence of an anomaly may not provide sufficient data to identify a bug. The results indicating the presence of a bug must be clear to the user.
-Both of these issues are being corrected
-by improving the tool's outputs.
-By more clearly describing
-the nature of a given result,
-users can have a better idea
-if,
-and why,
-they should be concerned.
+%\subsubsection{Bugs Found By Participants}
+%Because the above tests were carried out by CrashSimulator's developers,
+%who necessarily have a high degree of expertise in its operation,
+%we felt it prudent to ensure the tool was useful
+%to outside developers as well.
+%To investigate this angle,
+%we conducted a user study
+%with 12 undergraduate and graduate students with varying backgrounds.
+%Study participants found a total of 11 bugs using CrashSimulator.
+%Of these bugs, nine were found using the ``Unusual Filetype'' mutator.
+%Five of these bugs have since been reported to the appropriate maintainers,
+%and three of these reports included patches
+%that correct the bug
+%built by the reporting student.
+%
+%These results are important
+%because they confirm
+%users, other than the original development team,
+%can use the tool to find bugs in real world applications.
+%Participants commented that narrowing the source of a bug
+%down to a particular sequence of system calls
+%was helpful in identifying the area of
+%code responsible for the bug -- a feature
+%that decreased the time required to produce a fix.
+%Though observation of study participants
+%showed that familiarity with operating systems concepts
+%made it easier to work with CrashSimulator,
+%those without this background were still able to identify bugs using the
+%built in anomalies.
+%
+%On a less positive note,
+%the study did reveal
+%some shortcomings
+%of the tool.
+%First,
+%it became clear that the tool
+%does not have a clear mechanism
+%for determining
+%which application behaviors constitute a ``bug.''
+%For example, an application's developer
+%may have intended that an application processing an ``infinitely long'' file should run continuously
+%until killed by an outside command.
+%Therefore, that behavior should not be classified as a bug.
+%Second,
+%it demonstrated that
+%simply reporting that an application did or did not change its behavior
+%in the presence of an anomaly may not provide sufficient data to identify a bug. The results indicating the presence of a bug must be clear to the user.
+%Both of these issues are being corrected
+%by improving the tool's outputs.
+%By more clearly describing
+%the nature of a given result,
+%users can have a better idea
+%if,
+%and why,
+%they should be concerned.
 
 
 \subsection{What Sorts of Errors does CrashSimulator Make?}

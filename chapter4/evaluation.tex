@@ -29,7 +29,7 @@ Given that this work is motivated
 in large part
 by a desire to expand the utility of the SEA technique,
 our first experiment aims to reproduce the anomalies described
-in~\cite{DBLP:conf/issre/MooreCFW19}.
+in Chapter~\ref{chap:sea}.
 Specifically,
 we test PORT's ability to recreate
 the study's unusual file type mutator,
@@ -90,7 +90,7 @@ identifies a \texttt{stat}, \texttt{lstat}, or \texttt{fstat} call and modifies
 \label{lst:SEAListings}
 \end{figure}
 
-The original implementation of this mutator in~\cite{DBLP:conf/issre/MooreCFW19} consisted of 55 lines
+The original implementation of this mutator in Chapter\ref{chap:sea} consisted of 55 lines
 of Python code, much of it error-prone state management code. While this code was needed, it harmed
 readability and maintainability.
 When compared to the original mutator, it became apparent that there were
@@ -129,7 +129,7 @@ Linux
 another,
 applications must perform this complex
 operation themselves.
-Moore et al. identified the steps required to
+In Chapter~\ref{chap:sea}, we identified the steps required to
 correctly perform such a move by examining the source code of the ``mv''
 command. The team then implemented a set of checkers to identify situations where an application does not carry out one
 of these steps correctly.
@@ -138,7 +138,7 @@ these checkers were able to identify bugs
 in many popular applications and libraries that offer file movement
 capabilities.
 
-We evaluated each of the four checkers listed in Moore et al.'s work and
+We evaluated each of the four checkers listed in Chapter~\ref{chap:sea} and
 determined that PORT could implement three of them.
 Figure~\ref{lst:SEAListings} shows our PORT implementation of
 the ``File Replaced During Copy'' checker
@@ -195,7 +195,7 @@ can be added. To demonstrate this
 we implemented support for streams of USB activity. This format was chosen because of its ubiquity and its reliance on numerous parties correctly implementing a standard protocol.
 Using PORT on streams of USB activity required implementing an appropriate transformer and developing some way to capture communications between USB devices.
 For the latter, we used Wireshark because of its excellent traffic capture and dissection capabilities~\cite{wireshark}.
-For the former, implementing such a transformer was a straightforward task taking only around three and a half.
+For the former, implementing such a transformer was a straightforward task taking only around three and a half hours.
 Together, these two components allowed us to write PORT programs that could both identify patterns and transform streams of USB activity in minutes.
 
 \textbf{BADUSB} As one test scenario, we settled upon the recent type of USB-based attack known as BADUSB~\cite{badusb}.

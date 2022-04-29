@@ -2,34 +2,30 @@
 \label{sec:PORTbackground}
 
 
-\subsection{Our Motivating Example}
-\label{sec:MotivatingExample}
-% How SEA showed success using system calls
-
-The initial impetus for this work was sparked by the Simulating Environmental Anomalies (SEA) technique developed by Moore et al.~\cite{DBLP:conf/issre/MooreCFW19}.
-This effort centered on the key insight
+This effort aims to
+expand upon the key insight from
+Chapter~\ref{chap:sea}
 that problematic
 environmental properties,
 known as anomalies, are visible in the
 communications between the components that make up an application.
-The researchers found that,
-once captured,
-these anomalies
-could be
-used to simulate and
-test
-an application as if
-it had been encountered
-in the real world.
-Results of system calls made
-during execution were recorded, modified, and replayed to simulate whether or not the application
-responded correctly to the anomaly.
-Using this strategy, the authors were able to identify a number of bugs
-in major applications.
-
-As a concrete example of the above
+%The researchers found that,
+%once captured,
+%these anomalies
+%could be
+%used to simulate and
+%test
+%an application as if
+%it had been encountered
+%in the real world.
+%Results of system calls made
+%during execution were recorded, modified, and replayed to simulate whether or not the application
+%responded correctly to the anomaly.
+%Using this strategy, the authors were able to identify a number of bugs
+%in major applications.
+As a concrete example
 consider the ``Unusual File types'' anomaly
-discussed in the SEA paper's evaluation.
+discussed in Chapter~\ref{chap:sea}'s evaluation.
 This anomaly may be problematic
 when an application running under Linux
 attempts to open and read data from a file on disk.
@@ -44,13 +40,12 @@ of a {\tt stat} call.
 PORT improves on the original procedure for employing such an anomaly
 by simplifying how a target pattern
 and its desired modifications are employed.
-
-Our takeaway
-from this study
-was that an application's activity
-can be systematically mined to find bugs.
+%Our takeaway
+%from this study
+%was that an application's activity
+%can be systematically mined to find bugs.
 In this chapter, we
-show that the best way to extract this data
+show that the best way to extract the data required to do so
 is to treat application activity
 as a sequence of events. This enables us to use
 proven event processing techniques.

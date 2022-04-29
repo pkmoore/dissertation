@@ -46,7 +46,7 @@ the causes of these environment-related failures
 often can be seen in the
 communications between an application and its environment.
 These communications can include the
-system calls it makes or the messages it sends across a network.
+system calls the application makes or the messages it sends across a network.
 By taking advantage of this concept,
 we were able to develop two techniques that allow developers to catch environmental bugs
 before an application is deployed. 
@@ -56,7 +56,10 @@ known as Simulating Environmental Anomalies (SEA),
 allows developers to record features from one environment in which
 an application has failed and use them to determine if other
 applications are likely to fail in a similar manner.
-Using this technique enabled us to find many high impact bugs in popular,
+Using this technique enabled us to find many high impact bugs involving mishandling of unusual files,
+moving files across disks,
+and inappropriate network timeouts
+in popular,
 battle tested applications.
 
 The second technique is PORT, 
@@ -91,7 +94,7 @@ Our hope in developing these tools and techniques was to see them widely
 used in improving application reliability and security.
 But, to do so, these tools needed to be accurate, efficient, and easy to use. To test the latter quality, we 
 conducted a user study to see how well developers could integrate SEA into their workflows.
-At the conclusion of the study, we found that that participants were able to find new bugs in widely deployed software,
+At the conclusion of the study, we found that participants were able to find new bugs in widely deployed software,
 build corrective patches,
 and submit them to the appropriate upstream maintainers.
 

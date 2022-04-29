@@ -235,7 +235,7 @@ is often sufficient
 to classify application behavior.
 
 We explore this, and other checkers in our
-Evaluation section (Section VI)~\ref{sec:SEAevaluation}.
+Evaluation section Section~\ref{sec:SEAevaluation}.
 Section~\ref{sec-move-bugs} demonstrates how to find bugs using the null
 mutator, while Section~\ref{sec-file-type-bugs}
 illustrates how a more complex
@@ -252,11 +252,17 @@ by which the checkers and mutators
 constructed by its users can be used to
 test an application using the anomalies they represent.
 Building this capability
-required making a few key design decisions. The first, as mentioned in
-Section 2, was choosing to operate at the system call level, rather than
+required making a few key design decisions.
+The first, was choosing to operate at the system call level, rather than
 manipulating calls to library functions, memory accesses, or other points
 where we could influence an application's interactions.
-This allowed CrashSimulator
+We chose system calls because they offer well defined,
+commonly used interface between an application and its environment.
+Additionally,
+there were many system call related tools and libraries available to assist with CrashSimulator's development.
+Finally,
+using system calls
+allowed CrashSimulator
 to test applications written in any
 language that can execute Linux system
 calls -- an important advantage as our
@@ -280,7 +286,13 @@ system calls, we needed to ensure that an application would reliably make
 the same set of
 system calls, and reach the same simulation opportunities,
 with every execution.
-To this end,
+Our chosen mechanism for achieving this was to record and replay applications.
+This process simplifies simulation by separating it into two phases that can be accomplished independently.
+Recording an application both establishes what a normal execution looks like and produces a record that can be modified to include an anomaly.
+We perform this modification separately by executing a mutator against the trace which produces a recording identical to unmodified recording except for the set of changes that represent an anomaly.
+Having such a recording reduces simulation to the relatively mechanical task of enforcing the listed results and side effects upon an execution of the application.
+
+To implement our strategy
 we employed a modified
 {\tt rr} debugger~\cite{rrwebsite} to record and replay applications. Our
 first modification permitted a {\tt strace}-style system call recording
@@ -334,7 +346,7 @@ a corresponding checker
 monitors the application's behavior,
 allowing it to report on the correctness of the response.
 For example, testing could proceed in the following way.
-At a given simulation opportunity, when executing application $Y$,
+At a given simulation opportunity, when executing application $Y$
 cloned sets $Y_1$ and $Y_2$ are generated and
 used to test two scenarios where a file access could fail:
 \begin{enumerate}
@@ -347,7 +359,13 @@ This approach allows many tests to be run independently of one another,
 which lends a
 high degree of speed and
 parallelism to the testing process.
-At the same time, the original $Y$ execution continues unhindered to the
+This independence is possible because the problem of simultaneous tests involving the same global resources,
+such as files and network sockets,
+is avoided by emulating the system calls that access them.
+As such,
+it appears to the simulations that they have unfettered access to these resources
+when in reality they are simply receiving the specific results required by the scenario they are testing.
+Further, this allows the original $Y$ execution to continue unhindered to the
 next simulation opportunity where this process repeats.
 Keeping the original execution intact,
 as opposed to destroying it by introducing an error state,

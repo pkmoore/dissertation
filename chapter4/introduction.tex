@@ -11,19 +11,21 @@
 \epigraph{ ``Actions speak louder than words...'' }{Unknown}
 
 
-It is a well established principle
-that, in the wake of an application failure,
-its actions
-during execution can provide clues
-to the root cause.
-Such information
-can not only help correct
-the cause of failure,
-but also prevent its repetition through the creation
-of better test methods.
-The challenge is 
-how to identify and extract this data
-from large and detailed sources like application logs,
+%It is a well established principle
+%that, in the wake of an application failure,
+%its actions
+%during execution can provide clues
+%to the root cause.
+%Such information
+%can not only help correct
+%the cause of failure,
+%but also prevent its repetition through the creation
+%of better test methods.
+Having found success at finding bugs using SEA on an application's system calls,
+we sought to expand its use to other activity representations.
+The challenge was
+how to identify and modify patterns within
+large and detailed sources like application logs,
 system call traces,
 or application recordings.
 In other words, how does one
@@ -31,19 +33,22 @@ accurately describe what activity is important
 and what you should do when you find it?
 % This paper covers our efforts to make this process easier.
 
-In considering this question,  we drew inspiration from two sources. The
-first is a recent study that confirmed the value of monitoring and
-modifying an application’s  interactions with its environment~\cite{DBLP:conf/issre/MooreCFW19}.  Using a technique known as SEA (Simulating Environmental Anomalies), the study demonstrated that when an application fails, the causal properties
-will be visible in the results of the system calls it made. Further, the study affirmed these results could
-be captured and simulated for testing against other applications.  The
-second source was the significant amount of literature supporting the use of event
+%In considering this question,  we drew inspiration from two sources.
+%
+%The
+%first is a recent study that confirmed the value of monitoring and
+%modifying an application’s  interactions with its environment~\cite{DBLP:conf/issre/MooreCFW19}.  Using a technique known as SEA (Simulating Environmental Anomalies), the study demonstrated that when an application fails, the causal properties
+%will be visible in the results of the system calls it made. Further, the study affirmed these results could
+%be captured and simulated for testing against other applications.  The
+In considering this question, we drew inspiration from
+the significant amount of literature supporting the use of event
 processing techniques over large streams of data~\cite{DBLP:conf/sigmod/AgrawalDGI08,DBLP:conf/debs/Hirzel12,DBLP:journals/ibmrd/HirzelAGJKKMNSSW13,DBLP:journals/csur/DayarathnaP18}. We posited that techniques
 currently used to identify problems in  manufacturing environments, or patterns in
 network outages, could also be used to accurately recognize target
 sequences in large
 application activity streams.
 
-Building upon these successes,
+Building upon these techniques,
 we introduce a tool
 that utilizes event processing techniques
 to identify
@@ -79,7 +84,7 @@ and carried out a three part evaluation.
 The first part consisted of using our prototype
 to
 re-implement the ``anomalies''
-described in the earlier work on the SEA technique~\cite{DBLP:conf/issre/MooreCFW19}.
+described earlier in this work.
 Side-by-side comparison shows that our new
 descriptions are more concise,
 readable,
