@@ -1,14 +1,14 @@
 \chapter{Testing Usability and Effectiveness on a Wider Audience}
 \label{chap:userstudy}
 
-Our evaluation of CrashSimulator has shown that it is able to find new environmental bugs in widely deployed software. Following this success, we want to see if it
+Our evaluation of CrashSimulator has shown that it is able to find new environmental bugs in widely deployed software. Following this success, we wanted to see if it
 could be effective when employed by outside developers.
 After all, it's initial ``users'' in the study were developers with a high degree of expertise in its operation.
 
 To investigate the usability of the tool,
 we designed and conducted a study in which 12 undergraduate and graduate students with varying levels of experience went looking for bugs in commonly used applications.
 The study took place over the course of six sessions
-of an Application Security class.
+of a special topics Systems Security class (CSGY-9963) in the fall of 2019.
 Each class began with 20
 minutes of instruction on aspects of using the tool, followed by 70 minutes of active investigation. Participants employed
 CrashSimulator to find bugs, and then constructed patches to fix
@@ -27,7 +27,7 @@ we wanted to see if the participants were able to use CrashSimulator to find bug
 We discuss these results in~\ref{subsec:bugs-by-participants}, and summarize the bugs that were found.
 Second, we wanted the participants to help us identify usability issues
 or flaws within the tool itself. These observations are shared in~\ref{subsec:crashsim-patches}. Finally, we share our observations
-of how participants interacted with the tool and what shortcomings
+of how participants interacted with the tool, and what shortcomings
 it revealed in~\ref{subsec:tool-shortcomings}.
 
 \section{Study Parameters}
@@ -139,7 +139,7 @@ This patch prevents the coreutils `uniq` utility from processing block devices. 
 \label{subsec:crashsim-patches}
 
 One of the benefits of open source software is that it can be maintained and improved by its user community.
-This user study indicates that CrashSimulator is able to garner this sort of interaction from its users.
+This user study indicates that CrashSimulator is capable of garnering this sort of interaction from its users.
 Students submitted five patches
 to the tool's code over the
 course of the study period.
@@ -156,28 +156,6 @@ using CrashSimulator to test a wide variety of new applications.
 On the other hand, the number of bug reports not related to system call support
 indicates there is still work to be done on the tool.
 
-\section{Open Source Bug Reporting}
-
-In light of the above, it is worth briefly discussing the how the general way in which bugs are reported to open source projects.
-By the time an application makes it to a user's computer via a package manager it has been handled by several parties.
-First,
-the project's primary developers build and maintain the application itself.
-This means they are the preferred contact point for application bugs rather than bugs related to packaging or distribution specific modifications.
-Next, there may be distribution developers that may apply distribution-specific patches.  This is done to 
-For example, Debian maintains and applies a patch to its locale-related tools so that allows locale configuration changes to be automatically picked up and applied.
-These developers are the best point of contact for bugs and fixes related to these distribution-specific functions.
-Finally,
-there are the maintainers that deal with 
-packaging and distributing the application.
-These developers assemble an install-able package from the artifacts produced by upstream efforts.
-In the process they often make installation and configuration decisions in order to give end users a smoother experience when installing and using the application.
-Concerns related to packaging and installation are handled by these maintainers.
-
-Based on the above division of concerns,
-it is evident that submitting bugs or fixes to the proper maintainers is of paramount importance.
-We believe our participants' would have seen more success in getting their patches merged had they received better education on how open source projects organize their efforts.
-Submitting patches to the appropriate maintainer on the first attempt would have saved the turn around time necessary for distribution maintainers to triage the patch and recommend it be submitted upstream.
-This savings may have allowed the patches to be accepted within the study's allotted time.
 
 \section{Instructor Observations}
 \label{subsec:tool-shortcomings}
@@ -210,3 +188,28 @@ Thus, we feel our results show CrashSimulator is usable by outside developers ev
 We are also pleased with the improvements that came to the tool as a result of the collaboration between study participants and CrashSimulator's developers.
 The tool has had numerous bug fixes and usability enhancements as a result of this effort.
 We hope that such collaboration will be a cornerstone of the CrashSimulator project as we push for its wider adoption.
+
+\section{Open Source Bug Reporting}
+
+In light of the above, it is worth briefly discussing correct procedures for reporting bugs in open source projects and how this may have affected our ability to get patches adopted. It's important to remember that by the time an application makes it to a user's computer via a package manager, it has been handled by numerous different parties. So, deciding who should receive patches will be dictated by the type of bug and where it was found. 
+
+First, the preferred contact point for application bugs would be  
+the project's primary developers, as these are the individuals who build and maintain the application itself.
+A second point of contact might be the distribution developers who may apply distribution-specific patches. For example, Debian maintains and applies a patch to its locale-related tools so locale configuration changes will be automatically picked up and applied.
+These developers are the best point of contact for bugs and fixes related to these distribution-specific functions.
+
+Finally,
+there are the maintainers that deal with 
+packaging and distributing the application.
+These developers assemble an installable package from the artifacts produced by upstream efforts.
+In the process they often make installation and configuration decisions in order to give end users a smoother experience. 
+Therefore, concerns related to packaging and installation would be handled by these maintainers.
+Given that many of our patches were submitted to incorrect maintainers,
+explicitly explaining this process to our participants would have likely lead to more success.
+
+Based on the above division of concerns,
+it is evident that submitting bugs or fixes to the proper maintainers is of paramount importance.
+Our results point to a definite gap in how students are taught about working with open source projects.
+Instructors need to spend at least a  small amount of time explaining how these projects are organized.
+Submitting patches to the appropriate maintainer on the first attempt would have saved the turn around time necessary for distribution maintainers to triage the patch and recommend it be submitted upstream.
+This savings may have allowed the patches to be accepted within the study's allotted time.

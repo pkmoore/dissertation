@@ -26,7 +26,7 @@ An investigation of bug reports in major applications denotes several broad cate
 \begin{figure}[ht]
 \centering
   \includegraphics[frame,scale=.85]{chapter2/figures/environment}
-  \caption[Overview of Environment Components]{
+  \caption[Overview of Environmental Influences]{
     An application's execution is influenced by a number of factors, such as the system's hardware, the
     operating system,
     and other resources.  Anomalies are often visible in the communications (represented as dashed arrows) between an application and its environment.
@@ -39,17 +39,17 @@ An investigation of bug reports in major applications denotes several broad cate
 Applications depend upon an operating system to abstract away hardware concerns and provide services, such as network communications,
 storage,
 and memory management.
-Options for operating systems and operating system distributions are many, and each can differ others in a number of ways. These variances could include services,
+Options for both operating systems and operating system distributions are many, and each can differ in a number of ways. These variances could include services,
 configurations,
 preinstalled software,
 and the executable resources provided to applications.
-Though there have been numerous efforts to define standard interfaces, or develop abstractions to deal with these differences, these efforts have had varying degrees of success.
+Though there have been numerous efforts to define standard interfaces, or develop abstractions to deal with these differences, these efforts have had only varying degrees of success.
 
-One approach to ensuring compliant operating systems is to develop standards. In this manner, all applications would offer identically behaving services to applications. 
-Unfortunately, standard only work if they are uniformly compliant and ensuring compliance
+One approach to ensuring compliant operating systems is to develop standards. In this manner, all applications would offer identically-behaving services to applications. 
+Unfortunately, standards only work if they are uniformly compliant, and ensuring compliance
 may take a tremendous amount of effort.
 POSIX is an example of one such standard.
-It defines a set of libraries, facilities, and services an operating system should provide, as well as test suites to to prove compliance~\cite{posixoverview}.
+It defines a set of libraries, facilities, and services an operating system should provide, including test suites to prove compliance~\cite{posixoverview}.
 Most of the behaviors it standardizes are present in operating systems like Linux and MacOS. But, few operating system developers have gone through the complete process of becoming ``POSIX-Certified~\cite{posixregister}.''
 They instead prefer to remain ``mostly POSIX-compliant,'' which allows environmental differences to proliferate. 
 For example,
@@ -76,7 +76,7 @@ The exact file system and configuration used will also have a
 substantial impact on the behavior of a system, independent of the underlying
 operating system. Take the popular Ext4 file system on Linux. This system is case sensitive,
 so that ``a'' and ``A'' are different files.
-Meanwhile,if you are using OS X's HFS+ file system,
+Meanwhile, if you are using OS X's HFS+ file system,
 those names would refer to the same file.
 This specific difference has led to bugs in major, modern applications like Visual Studio Code~\cite{vscodebug}.
 
@@ -151,19 +151,19 @@ x86-based processors are being replaced with ARM-based alternatives in some scen
 A major shift occurred when Apple began shipping laptops that use their own ARM-based M1 processor.
 As developers began using these laptops,
 subtle portability issues resulting from hardware differences appeared.
-The impacts of these issues include massive performance hits~\cite{ghcompile}, 
+The impacts of these issues include massive performance hits~\cite{ghccompile}, 
 
 Virtualized hardware has similar concerns.
-In some cases emulated hardware processes important instructions differently than its physical counterpart~\cite{unicornbug}.
+In some cases emulated hardware handles important instructions differently than its physical counterpart~\cite{unicornbug}.
 Occasionally,
-such hardware will completely omit features that applications depend upon in order to work correctly.
+such hardware will completely omit features that some applications require in order to work correctly.
 We encountered this issue when working with the {\tt rr}
 record-and-replay debugger under various pieces of virtualization software.
 {\tt rr} uses hardware performance counters to correctly replicate thread interleaving during replay. Yet,
 at the time of this writing,
 only VMWare products supported virtualized hardware performance counters~\cite{vmwarecounters}.
 While {\tt rr} is able to detect and report the absence of this capability,
-this case illustrates the need for an application to perform a similar examination of its environment before deploying.
+this case illustrates why it's important to  know the environment before deploying an application.
 
 % spectre apps run slower after fixes 
 
